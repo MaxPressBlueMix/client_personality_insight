@@ -1,0 +1,19 @@
+{
+  "name": "Client_Personality_Insight",
+  "version": "0.0.1",
+  "description": "Reveal personality information about a client.",
+  "dependencies": {
+	  "chriswessels:hammer": "*"
+  },
+  "author": "David E. Powell <david@depowell.com>",
+  "contributors": [
+    {
+      "name": "David Powell",
+      "email": "david@depowell.com"
+    }
+  ],
+  "engines": {
+    "node": ">=0.10"
+  },
+  "scripts": {}
+}

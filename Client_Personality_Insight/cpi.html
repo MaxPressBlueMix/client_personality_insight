@@ -1,0 +1,76 @@
+<head>
+	<title>Client Personality Insight</title>
+	<meta name=viewport content='width=500'>
+	
+	<!-- media tag for stuff only on phone or tablet -->
+	<style type="text/css">
+		@media screen and (max-width: 400px) {
+	    body {
+	        background-color: lightgray;
+	    }
+	}
+	</style>
+  </head>
+
+<body>
+  <div class="canvas">
+  <h1>Company and Client Personality Insight</h1>
+
+	{{> page}}
+	</div>
+	<br>
+	{{> nav}}
+</body>
+
+<template name="page">
+  {{#HammerTouchArea gestureMap=templateGestures}}
+ 	{{#if pageIs "1"}}
+	 	<form>
+		  {{> company}}
+		  <br>
+		  {{> client}}
+		</form>
+ 		{{/if}}
+
+ 	{{#if pageIs "2"}}
+ 		<div id="page2">
+	 		<img src="images/watson.gif">
+	 		</div>
+ 		{{/if}}
+ 
+  {{/HammerTouchArea}}
+</template>
+
+<template name="nav">
+	<table width=100% class="navtable">
+		<tr>
+			<td align="left"><a href="#" name="prev" data-transition="slide">&lt;Previous</a></td>	
+  			<td align="right"><a href="#" name="next" data-transition="slide">Next&gt;</a></td>
+  			</tr>
+  		</table>	
+	</template>
+
+<template name="company">
+	<fieldset>
+        <legend>Company</legend>
+			<table>
+			<tr><td class="label">Name:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+	        <tr><td class="label">City:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+	        <tr><td class="label">State:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+	        <tr><td class="label">Country:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+			<tr><td class="label">Twitter Handle:</td><td><input autocomplete="off" class="full-width"></td><td><button>Look It Up</button></td></tr>
+			</table>
+		</fieldset>
+</template>
+
+<template name="client">
+	<fieldset>
+        <legend>Client</legend>
+			<table>
+			<tr><td class="label">Name:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+	        <tr><td class="label">LinkedIn Username:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+			<tr><td class="label">Twitter Handle:</td><td><input autocomplete="off" class="full-width"></td><td><button>Look It Up</button></td></tr>
+			</table>
+		</fieldset>
+</template>		
+

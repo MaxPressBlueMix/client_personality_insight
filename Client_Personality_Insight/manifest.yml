@@ -1,0 +1,12 @@
+---
+applications:
+- name:      Client Personality Insight
+  host:      client-personality-insight
+  memory:    256M
+  buildpack: https://github.com/ind1go/bluemix-buildpack-meteor.git
+
+  services:
+   - MongoLab-o9
+   - Personality Insights-cpi
+  instances: 1
+

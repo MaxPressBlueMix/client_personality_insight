@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+
+fieldset {
+	max-width: 500px;
+	min-width: 330px;
+	table-layout: fixed;
+	border-width:1;
+	border-style:ridge;
+	border-color:blue;
+	border-radius: 15px;
+	box-shadow: 10px 10px 5px #888888;
+	}
+
+legend {
+	border:none;
+	}
+
+.full-width {
+	width: 95%;
+}
+
+input {
+	max-width:100%;
+	font-size: 125%;
+	autocorrect: off;
+	text-transform: capitalize;
+}
+
+.label {	
+	text-align: right;
+	width: 25%;
+}
+
+.canvas {
+	text-align: center;
+	margin: auto;
+    width: 90%;
+	height: 100%;
+}
+
+td {
+	white-space: nowrap;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+	data-transition: slide;
+}
+
+.navtable {
+	position: fixed;
+    bottom: 0;
+    max-width: 95%;
+}
