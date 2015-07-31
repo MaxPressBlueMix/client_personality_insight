@@ -1,16 +1,16 @@
 if (Meteor.isClient) {
 	Session.setDefault('pageNumber',1);
 	
-	function SlideIn(el){
-	    var elem = document.getElementById(el);
-	    elem.style.transition = "left 1.5s linear 0s";
-	    elem.style.left = "10px";
-	}
-	function SlideOut(el){
-	    var elem = document.getElementById(el);
-	    elem.style.transition = "left 1.5s linear 0s";
-	    elem.style.left = "-200px";
-	}
+//	function SlideIn(el){
+//	    var elem = document.getElementById(el);
+//	    elem.style.transition = "left 1.5s linear 0s";
+//	    elem.style.left = "10px";
+//	}
+//	function SlideOut(el){
+//	    var elem = document.getElementById(el);
+//	    elem.style.transition = "left 1.5s linear 0s";
+//	    elem.style.left = "-200px";
+//	}
 
 	
 	function increasePageNumber()
