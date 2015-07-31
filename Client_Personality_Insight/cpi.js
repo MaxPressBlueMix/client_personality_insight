@@ -94,7 +94,7 @@ if (Meteor.isClient) {
 		if (event.target.name=="prev")
 			decreasePageNumber();//slide in previous page
 		else if (event.target.name=="next")
-			slidein("page2");
+//			slidein("page2");
 			increasePageNumber();//slide in next page
 //		alert(Session.get("pageNumber"));
 		
