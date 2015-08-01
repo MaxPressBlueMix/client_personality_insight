@@ -1,18 +1,19 @@
 @CHARSET "UTF-8";
 
-fieldset {
-	max-width: 500px;
+.myfieldset {
 	min-width: 330px;
 	table-layout: fixed;
 	border-width:1;
 	border-style:ridge;
 	border-color:blue;
-	border-radius: 15px;
-	box-shadow: 10px 10px 5px #888888;
+	border-radius: 1px;
+	border-bottom: 1px solid #00b2ef;
 	}
 
-legend {
+.mylegend {
 	border:none;
+	text-align: left;
+	color: #00b2ef;
 	}
 
 .full-width {
@@ -26,13 +27,13 @@ input {
 	text-transform: capitalize;
 }
 
-.label {	
+.in-label {	
 	text-align: right;
 	width: 25%;
 }
 
 .canvas {
-	text-align: center;
+	text-align: left;
 	margin: auto;
     width: 90%;
 	height: 100%;
@@ -55,3 +56,17 @@ a {
     bottom: 0;
     max-width: 95%;
 }
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+  
