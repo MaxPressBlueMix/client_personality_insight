@@ -1,12 +1,13 @@
 <head>
 	<title>Client Personality Insight</title>
 	<meta name=viewport content='width=400'>
-  </head>
+  	</head>
 
 <body>
   <div class="canvas">
-
+<div id="thorax" class="slideExpandUp">
 	{{> page}}
+	</div>
 	</div>
 	<br>
 	{{> nav}}
@@ -20,9 +21,8 @@
 				<div class="row top-nav">
 					<div class="col-lg-12">
 						<h3 class="heading left">
-							Company and Client<span> Personality Insight</span>
-							<span><small>powered by </small></span>
-							<span>Watson</span>
+							Client Personality Insight
+							<small class="smallblue">powered by Watson</small>
 						</h3>
 					</div>
 				</div>
@@ -31,8 +31,8 @@
 						<img src="/images/personalityInsights.png">
 					</div>
 					<div class="col-lg-10 col-xs-10"> 
-						<h2>Company and Client Personality Insight - Technology Demo</h2>
-						<p>IBM Cloud Company and Client Personality Insight will be a cognitive computing feature of the new IBM Cloud Business Partner Guide powered by Watson. 
+						<h2>Client Personality Insight - Technology Demo</h2>
+						<p>IBM Cloud Client Personality Insight will be a cognitive computing feature of the new IBM Cloud Business Partner Guide powered by Watson. 
 						   It uses IBM Watson's Personality Insights service to help business partners serve customers.
 							</p>
 					</div>
@@ -40,8 +40,6 @@
 			</div>
 		</div>
 	 	<form>
-		  {{> company}}
-		  <br>
 		  {{> client}}
 		  <br>
 		  <div class="mid-dle"><button id='fetch'>Submit</button></div>
@@ -66,27 +64,12 @@
   		</table>	
 	</template>
 
-<template name="company">
-	<fieldset class="myfieldset">
-        <legend class="mylegend">Company</legend>
-			<table>
-			<tr><td class="in-label">Name:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
-	        <tr><td class="in-label">City:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
-	        <tr><td class="in-label">State:</td><td colspan=2> {{> selectstate}} </td></tr>
-	        <tr><td class="in-label">Country:</td><td colspan=2>{{> selectcountry}}</td></tr>
-			<tr><td class="in-label">Twitter Handle:</td><td><input autocomplete="off" class="full-width"></td><td><button>Look It Up</button></td></tr>
-			</table>
-			<br>
-		</fieldset>
-</template>
-
 <template name="client">
 	<fieldset class="myfieldset">
-        <legend class="mylegend">Client</legend>
+        <legend class="mylegend">Twitter Personality Comparison</legend>
 			<table>
-			<tr><td class="in-label">Name:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
-	        <tr><td class="in-label">LinkedIn Username:</td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
-			<tr><td class="in-label">Twitter Handle:</td><td><input autocomplete="off" class="full-width"></td><td><button>Look It Up</button></td></tr>
+			<tr><td class="in-label">Partner Twitter Handle: </td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+			<tr><td class="in-label">Client Twitter Handle: </td><td><input autocomplete="off" class="full-width"></td><td><button>Look It Up</button></td></tr>
 			</table>
 			<br>
 		</fieldset>
