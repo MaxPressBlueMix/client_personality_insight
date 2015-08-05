@@ -34,32 +34,6 @@ if (Meteor.isClient) {
 		    'swipeleft div': function (event, templateInstance) {
 		    	console.log(event);
 		    	increasePageNumber();
-		    	
-		    	
-//		    	alert("type: "+event.type+
-//		    			"\ndeltaX: "+event.deltaX+
-//		    			"\ndeltaY: "+event.deltaY+
-//		    			"\ndeltaTime: "+event.deltaTime+
-//		    			"\ndistance: "+event.distance+
-//		    			"\nangle: "+event.angle+
-//		    			"\nvelocityX: "+event.velocityX+
-//		    			"\nvelocityY: "+event.velocityY+
-//		    			"\nvelocity: "+event.velocity+
-//		    			"\ndirection: "+event.direction+
-//		    			"\noffsetDirection: "+event.offsetDirection+
-//		    			"\nscale: "+event.scale+
-//		    			"\nrotation: "+event.rotation+
-//		    			"\ncenter: "+event.center+
-//		    			"\nsrcEvent: "+event.srcEvent+
-//		    			"\ntarget: "+event.target+
-//		    			"\npointerType: "+event.pointerType+
-//		    			"\neventType: "+event.eventType+
-//		    			"\nisFirst: "+event.isFirst+
-//		    			"\nisFinal: "+event.isFinal+
-//		    			"\npointers: "+event.pointers+
-//		    			"\nchangedPointers: "+event.changedPointers+
-//		    			"\npreventDefault: "+event.preventDefault
-//);
 		      /* `event` is the Hammer.js event object */
 		      /* `templateInstance` is the `Blaze.TemplateInstance` */
 		      /* `this` is the data context of the element in your template, so in this case `someField` from `someArray` in the template */
@@ -75,18 +49,24 @@ if (Meteor.isClient) {
   // counter starts at 0
   Session.setDefault('counter', 0);
 
-  Template.company.helpers({
-    counter: function () {
-      return Session.get('counter');
-    }
-  });
-
-  Template.company.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
-    }
-  });
+  Template.client.events({
+	    'click button': function (event) 
+	    	{
+	    	event.preventDefault(); // We'll handle it
+	    	event.stopPropagation();
+	    	// Look up the client's twitter handle
+	    	document.getElementById("overlay").style.visibility ="visible";
+	    	document.getElementById("twitter-handle-lookup").className += "slideExpandUp";
+	    	return false;
+	    	},
+	    'click #close': function ()
+	    	{
+	    	document.getElementById("overlay").style.visibility ="hidden";
+	    	document.getElementById("twitter-handle-lookup").className =
+	    		   document.getElementById("twitter-handle-lookup").className.replace
+	    		      ( /(?:^|\s)slideExpandUp(?!\S)/g , '' )
+	    	}
+	  });
 
   Template.nav.events({
 	'click a': function(event, template) {

@@ -65,8 +65,49 @@ a {
 	color: #00b2ef;
 }
 
+#mid {
+	text-align: center;
+	vertical-align: middle;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10;
+    visibility: hidden;
+}
+#twitter-handle-lookup {
+	width: 300px;
+    height: 200px;
+    position: fixed;
+    top: 50%; 
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
+    background-color: #00b2ef;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 11; /* 1px higher than the overlay layer */
+    visibility: hidden;
+}
 
+#twitter-handle-lookup-table {
+	width: 300px;
+    height: 200px;
+}
 
+.bot-text {
+	vertical-align: bottom;
+	padding: 5px;
+}
+
+.top-text {
+	vertical-align: top;
+	padding: 5px;
+}
 
 
 
