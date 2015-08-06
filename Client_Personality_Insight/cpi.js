@@ -1,5 +1,5 @@
 if (Meteor.isClient) {
-	Session.setDefault('pageNumber',1);
+	Session.set('pageNumber',1);
 	
 //	function SlideIn(el){
 //	    var elem = document.getElementById(el);
@@ -16,13 +16,30 @@ if (Meteor.isClient) {
 	function increasePageNumber()
 		{
 		var page=Session.get('pageNumber');
+    	document.getElementById("page"+page).style.zIndex ="1"; //old page
+    	document.getElementById("page"+page).style.visibility ="hidden"; //hide it
+    	document.getElementById("page"+page).className =	//remove old slider
+ 		   document.getElementById("page"+page).className.replace
+ 		      ( /(?:^|\s)slideRight(?!\S)/g , '' )
 		Session.set('pageNumber',++page);
+    	document.getElementById("page"+page).style.visibility ="visible"; //show it
+    	document.getElementById("page"+page).style.zIndex ="10"; //new page
+    	document.getElementById("page"+page).className += " slideLeft"; //slide it
 		}
 	
 	function decreasePageNumber()
 		{
 		var page=Session.get('pageNumber');
+		if (page==1) return;
+    	document.getElementById("page"+page).style.zIndex ="1"; //old page
+    	document.getElementById("page"+page).style.visibility ="hidden"; //hide it
+    	document.getElementById("page"+page).className =	//remove old slider
+  		document.getElementById("page"+page).className.replace
+  		      ( /(?:^|\s)slideLeft(?!\S)/g , '' )
 		Session.set('pageNumber',--page);
+    	document.getElementById("page"+page).style.visibility ="visible"; //show it
+    	document.getElementById("page"+page).style.zIndex ="10"; //new page
+    	document.getElementById("page"+page).className += " slideRight"; //slide it
 		}
 
 	Template.page.helpers({
@@ -50,7 +67,7 @@ if (Meteor.isClient) {
   Session.setDefault('counter', 0);
 
   Template.client.events({
-	    'click button': function (event) 
+	    'click #lookitup': function (event) 
 	    	{
 	    	event.preventDefault(); // We'll handle it
 	    	event.stopPropagation();

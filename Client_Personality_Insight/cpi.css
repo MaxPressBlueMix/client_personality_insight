@@ -109,8 +109,26 @@ a {
 	padding: 5px;
 }
 
+.page1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+	visibility: visible;
+}
 
-
+.page2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+	border: 3px solid #8AC007;
+    visibility: hidden;
+}
 
   
   

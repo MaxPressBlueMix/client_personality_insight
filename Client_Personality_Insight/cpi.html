@@ -15,8 +15,7 @@
 
 <template name="page">
   {{#HammerTouchArea gestureMap=templateGestures}}
- 	{{#if pageIs "1"}}
-		<div class="row">
+		<div id="page1" class="row">
 			<div class="col-lg-12">
 				<div class="row top-nav">
 					<div class="col-lg-12">
@@ -38,19 +37,16 @@
 					</div>
 				</div>
 			</div>
-		</div>
 	 	<form>
 		  {{> client}}
 		  <br>
 		  <div class="mid-dle"><button id='fetch'>Submit</button></div>
 		</form>
- 		{{/if}}
+		</div>
 
- 	{{#if pageIs "2"}}
- 		<div id="page2">
+ 		<div id="page2" style="visibility: hidden;">
 	 		<img src="images/watson.gif">
 	 		</div>
- 		{{/if}}
  
   {{/HammerTouchArea}}
 </template>
@@ -69,11 +65,12 @@
 	<fieldset class="myfieldset">
         <legend class="mylegend">Twitter Personality Comparison</legend>
 			<table>
-			<tr><td class="in-label">Client Twitter Handle: </td>
+			<tr><td class="in-label">Client Twitter Handle:&nbsp;</td>
 				<td><input autocomplete="off" class="full-width"></td>
 				<td><button id="lookitup">Look It Up</button></td></tr>
 			<br>
-			<tr><td class="in-label">Your Twitter Handle: </td><td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+			<tr><td class="in-label">Your Twitter Handle:&nbsp;</td>
+			    <td colspan=2><input autocomplete="off" class="full-width"></td></tr>
 			</table>
 			<br>
 		</fieldset>
@@ -82,7 +79,7 @@
 		<div align="right"><a href="#" id="close" style="color:black;">Close X </a></div>
 		<table id="twitter-handle-lookup-table">
 		<tr>
-		<td class="bot-text">Client Name: <input placeholder="First and last name"/></td></tr>
+		<td class="bot-text">Client Name:&nbsp;<input placeholder="First and last name"/></td></tr>
 		<tr><td class="top-text"><button>Search</button></td></tr>
 		</table>
 		</div>
