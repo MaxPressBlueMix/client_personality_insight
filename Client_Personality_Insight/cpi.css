@@ -24,7 +24,6 @@ input {
 	max-width:100%;
 	font-size: 125%;
 	autocorrect: off;
-	text-transform: capitalize;
 }
 
 .in-label {	
@@ -55,6 +54,7 @@ a {
 	position: fixed;
     bottom: 0;
     max-width: 95%;
+    z-index: 15;
 }
 
 .mid-dle {

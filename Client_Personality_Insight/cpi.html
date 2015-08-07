@@ -44,8 +44,9 @@
 		</form>
 		</div>
 
- 		<div id="page2" style="visibility: hidden;">
-	 		<img src="images/watson.gif">
+ 		<div id="page2" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 1; visibility: hidden;">
+ 			{{{ userProfile }}}
+ 			
 	 		</div>
  
   {{/HammerTouchArea}}
@@ -66,11 +67,14 @@
         <legend class="mylegend">Twitter Personality Comparison</legend>
 			<table>
 			<tr><td class="in-label">Client Twitter Handle:&nbsp;</td>
-				<td><input autocomplete="off" class="full-width"></td>
+				<td><input id="clientTwitter" autocomplete="off" class="full-width"></td>
 				<td><button id="lookitup">Look It Up</button></td></tr>
 			<br>
 			<tr><td class="in-label">Your Twitter Handle:&nbsp;</td>
-			    <td colspan=2><input autocomplete="off" class="full-width"></td></tr>
+			    <td colspan=2><input name="twittername" autocomplete="off" class="full-width"></td></tr>
+			<br>
+			<tr><td class="in-label">Your Twitter Password:&nbsp;</td>
+			    <td colspan=2><input type="password" name="twitterpass" autocomplete="off" class="full-width"></td></tr>
 			</table>
 			<br>
 		</fieldset>

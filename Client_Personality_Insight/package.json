@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "Reveal personality information about a client.",
   "dependencies": {
-	  "chriswessels:hammer": "*"
+	  "chriswessels:hammer": "*",
+	  "http":"*"
   },
   "author": "David E. Powell <david@depowell.com>",
   "contributors": [

@@ -1,17 +1,48 @@
 if (Meteor.isClient) {
 	Session.set('pageNumber',1);
+	Session.set("userprofile",null);
 	
-//	function SlideIn(el){
-//	    var elem = document.getElementById(el);
-//	    elem.style.transition = "left 1.5s linear 0s";
-//	    elem.style.left = "10px";
-//	}
-//	function SlideOut(el){
-//	    var elem = document.getElementById(el);
-//	    elem.style.transition = "left 1.5s linear 0s";
-//	    elem.style.left = "-200px";
-//	}
-
+	function getTwitterUser()
+		{
+		var profile=Session.get("userprofile");
+		var twitterUser=document.getElementById("clientTwitter");
+		if (twitterUser!=null)
+			twitterUser=twitterUser.value;
+		if (twitterUser==null || twitterUser.length==0)
+			{
+			profile= "Please enter the client's Twitter handle.";			
+			}
+		else if (profile==null)
+			{
+			console.log("Fetching Twitter profile for "+twitterUser);
+			Meteor.call('getTwitterProfile', twitterUser, buildTwitterProfile);
+			profile= '<img src="images/watson.gif">';
+			}
+		return profile;
+		}
+	
+	
+	function buildTwitterProfile(error, result)
+		{
+		var profile=null;
+		if (error)
+			{
+			profile="An error has occurred: "+error;
+			}
+		else
+			{
+			var iframe = document.createElement('iframe');
+			var html = result.content;
+			document.getElementById("page2").appendChild(iframe);
+			iframe.contentWindow.document.open();
+			iframe.contentWindow.document.write(html);
+			iframe.contentWindow.document.close();
+			
+			
+			profile=""; //fake it
+			}
+		Session.set("userprofile",profile);
+		}
 	
 	function increasePageNumber()
 		{
@@ -45,11 +76,9 @@ if (Meteor.isClient) {
 	Template.page.helpers({
 		  templateGestures: {
 		    'swiperight div': function (event, templateInstance) {
-		    	console.log(event);
 		    	decreasePageNumber();
 		    	},
 		    'swipeleft div': function (event, templateInstance) {
-		    	console.log(event);
 		    	increasePageNumber();
 		      /* `event` is the Hammer.js event object */
 		      /* `templateInstance` is the `Blaze.TemplateInstance` */
@@ -60,12 +89,18 @@ if (Meteor.isClient) {
 	pageIs: function(pageNum) 
 		{
 		return Session.get('pageNumber')==pageNum;
-		}
-	});
+		},
+		
+	userProfile: getTwitterUser
+		});
 
-  // counter starts at 0
-  Session.setDefault('counter', 0);
-
+//  Template.client.onRendered(function() 
+//		{
+//	  	//this should make the template refresh when the client twitter name is rendered
+//	    this.autorun(getTwitterUser);  
+//	    }
+//  );
+  
   Template.client.events({
 	    'click #lookitup': function (event) 
 	    	{
@@ -82,12 +117,13 @@ if (Meteor.isClient) {
 	    	document.getElementById("twitter-handle-lookup").className =
 	    		   document.getElementById("twitter-handle-lookup").className.replace
 	    		      ( /(?:^|\s)slideExpandUp(?!\S)/g , '' )
-	    	}
+	    	},
+	    'blur #clientTwitter': getTwitterUser
+	    
 	  });
 
   Template.nav.events({
 	'click a': function(event, template) {
-		
 		if (event.target.name=="prev")
 			decreasePageNumber();//slide in previous page
 		else if (event.target.name=="next")
