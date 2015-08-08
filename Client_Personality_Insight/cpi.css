@@ -109,22 +109,26 @@ a {
 	padding: 5px;
 }
 
-.p-header {
+#p-header {
     background-color: #02d896;
-    height: 75px;
+    height: 8%;
+    visibility: inherit;
 }
 
-.page1 {
-    position: absolute;
-    top: 0;
-    left: 0;
+#p-photos {
+	background-color: white;
+	position: absolute;
+    visibility: inherit;
+/*	border: solid 2px red; */
+}
+
+#page1 {
     height: 100%;
-    width: 100%;
     z-index: 10;
 	visibility: visible;
 }
 
-.page2 {
+#page2 {
     position: absolute;
     top: 0;
     left: 0;
@@ -132,18 +136,16 @@ a {
     width: 100%;
     z-index: 1;
     background-color: #546169;
-	border: 3px solid red;
     visibility: hidden;
 }
 
-.page3 {
+#page3 {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
     z-index: 1;
-	border: 3px solid #8AC007;
     visibility: hidden;
 }
 

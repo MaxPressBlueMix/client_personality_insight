@@ -1,10 +1,59 @@
+
+function resizeCanvas() {
+	var c = document.getElementById("p-photos");
+	c.width = window.innerWidth;//*.986;
+	c.height = window.innerHeight/4;  //25%
+	buildGraph();
+	}
+
+function drawOval(context,x,y,radius,color,lineWidth)
+	{
+	var ovalRatio=0.85;
+	context.save();
+	context.scale(ovalRatio,1); //make it an oval
+	context.beginPath();
+	context.arc(x/ovalRatio,y,radius,0,2*Math.PI);
+	context.restore();
+	context.strokeStyle=color;
+	context.lineWidth = lineWidth;
+	context.stroke();	
+	}
+
+
 if (Meteor.isClient) {
 	Session.set('pageNumber',1);
-	Session.set("userprofile",null);
-
+	Session.set("clientProfile",null);
+	window.addEventListener('resize', resizeCanvas, false);
+	
 	function buildGraph()
 		{
-		
+//		var profile=Session.get("clientProfile");
+//		console.log("client profile is ");
+//		console.log(profile);
+		if (comparePageNums(2))
+			{
+			// draw the picture circles
+			var c = document.getElementById("p-photos");
+			var ctx = c.getContext("2d");
+			
+			// BP picture circle
+			var x=c.width/6.7;
+			var y=c.height*.44;
+			var r=(c.height*.66)/2;
+			//the thick oval
+			drawOval(ctx,x,y,r,"#02d896",c.height*0.1);
+			//the thin white line in the oval
+			drawOval(ctx,x,y,r,"white",1);
+			
+			// Client picture circle
+			x=c.width-x;
+			//the thick oval
+			drawOval(ctx,x,y,r,"#A364FB",c.height*0.1);
+			//the thin white line in the oval
+			drawOval(ctx,x,y,r,"white",1);
+			
+
+			}
 		}
 	
 	function bumpPage(event, template) 
@@ -46,7 +95,7 @@ if (Meteor.isClient) {
 	
 	function getTwitterUser()
 		{
-		var profile=Session.get("userprofile");
+		var profile=Session.get("clientProfile");
 		var twitterUser=document.getElementById("clientTwitter");
 		if (twitterUser!=null)
 			twitterUser=twitterUser.value;
@@ -83,7 +132,7 @@ if (Meteor.isClient) {
 			
 			profile=""; //fake it
 			}
-		Session.set("userprofile",profile);
+		Session.set("clientProfile",profile);
 		}
 	
 	function increasePageNumber()
@@ -92,9 +141,12 @@ if (Meteor.isClient) {
 		var whichPage=document.getElementById("page"+page);
     	whichPage.style.zIndex ="1"; //old page
     	whichPage.style.visibility ="hidden"; //hide it
-    	whichPage.className =	//remove old slider
+    	whichPage.className =	//remove old sliders
     		whichPage.className.replace
  		      ( /(?:^|\s)slideRight(?!\S)/g , '' )
+    	whichPage.className =	//both directions
+    		whichPage.className.replace
+ 		      ( /(?:^|\s)slideLeft(?!\S)/g , '' )
 		Session.set('pageNumber',++page);
     	whichPage=document.getElementById("page"+page);
     	if (whichPage==null)
@@ -116,9 +168,12 @@ if (Meteor.isClient) {
 		var whichPage=document.getElementById("page"+page);
 		whichPage.style.zIndex ="1"; //old page
 		whichPage.style.visibility ="hidden"; //hide it
-		whichPage.className =	//remove old slider
+		whichPage.className =	//remove old sliders
 			whichPage.className.replace
   		      ( /(?:^|\s)slideLeft(?!\S)/g , '' )
+    	whichPage.className =	//both directions
+    		whichPage.className.replace
+ 		      ( /(?:^|\s)slideRight(?!\S)/g , '' )
 		Session.set('pageNumber',--page);
 		whichPage=document.getElementById("page"+page);
 		whichPage.style.visibility ="visible"; //show it
@@ -140,7 +195,7 @@ if (Meteor.isClient) {
 		  },
 		
 		pageIs: comparePageNums,
-		userProfile: getTwitterUser,
+		clientProfile: getTwitterUser,
 		personality: buildGraph
 		});
 
@@ -150,6 +205,8 @@ if (Meteor.isClient) {
 //	    this.autorun(getTwitterUser);  
 //	    }
 //  );
+  
+  Template.page.onRendered(resizeCanvas);
   
   Template.client.events({
 	    'click #lookitup': openLookup,
