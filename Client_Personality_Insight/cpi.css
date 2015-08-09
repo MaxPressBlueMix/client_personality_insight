@@ -122,6 +122,22 @@ a {
 /*	border: solid 2px red; */
 }
 
+#p-compat {
+/*	border: solid 2px red; */
+	position: absolute;
+    top: 35%;
+    width: 100%;
+}
+
+.p-table {
+	table-layout: fixed;
+	color: white;	
+}
+
+.graph {
+	height:25px;
+}
+
 #page1 {
     height: 100%;
     z-index: 10;

@@ -50,59 +50,70 @@ if (Meteor.isClient) {
 //			bpImage.src=Session.get("bpProfile").photo;
 //			bpImage.onload=drawBpPicture;
 //			bpImage.onerror=badBpPicture;
-			
-			//set up some variables to draw the ovals
-			var c = document.getElementById("p-photos");
-			var ctx = c.getContext("2d");
-
-			var clientColor="#A364FB";
-			var bpColor="#02d896";
-			var thinLineColor="white";
-			var fatLineWidth=c.height*0.1;
-			var thinLineWidth=1;
-
-			// BP picture circle
-			var x=c.width/6.7;
-			var y=c.height*.44;
-			var r=(c.height*.66)/2;
-			//the thick oval
-			drawOval(ctx,x,y,r,bpColor,fatLineWidth);
-			//the thin white line in the oval
-			drawOval(ctx,x,y,r,thinLineColor,thinLineWidth);
-			
-			//draw the line between the circles
-		//	ctx.save(); //save where we are for later
-			// do the wide BP line
-			ctx.beginPath();
-			ctx.moveTo(x+r,y);
-			ctx.lineTo(c.width/2,y); //stop in the center
-			ctx.strokeStyle=bpColor;
-			ctx.lineWidth=fatLineWidth;
-			ctx.stroke();
-			//switch to the client color
-			ctx.strokeStyle=clientColor;
-			ctx.beginPath();
-			ctx.moveTo(c.width/2,y);
-			ctx.lineTo(c.width*.78,y);
-			ctx.stroke();
-			//go back and do the thin line
-		//	ctx.restore();
-			ctx.beginPath();
-			ctx.moveTo(x+r,y);
-			ctx.lineTo(c.width*.78,y);
-			ctx.lineWidth=thinLineWidth;
-			ctx.strokeStyle=thinLineColor;
-			ctx.stroke();
-				
-			// Client picture circle
-			x=c.width-x;
-			//the thick oval
-			drawOval(ctx,x,y,r,clientColor,fatLineWidth);
-			//the thin white line in the oval
-			drawOval(ctx,x,y,r,thinLineColor,1);
-			
-			
+			drawSummarySection();
+			drawSliders();
 			}
+		}
+	
+	/*
+	 * Draws the sliders with the dots
+	 */
+	function drawSliders()
+		{
+		
+		}
+	
+	/*
+	 * Draws the section with the photos and summary
+	 */
+	function drawSummarySection()
+		{
+		//set up some variables to draw the ovals
+		var c = document.getElementById("p-photos");
+		var ctx = c.getContext("2d");
+
+		var clientColor="#A364FB";
+		var bpColor="#02d896";
+		var thinLineColor="white";
+		var fatLineWidth=c.height*0.1;
+		var thinLineWidth=1;
+
+		// BP picture circle
+		var x=c.width/6.7;
+		var y=c.height*.44;
+		var r=(c.height*.66)/2;
+		//the thick oval
+		drawOval(ctx,x,y,r,bpColor,fatLineWidth);
+		//the thin white line in the oval
+		drawOval(ctx,x,y,r,thinLineColor,thinLineWidth);
+		
+		// Client picture circle
+		//the thick oval
+		drawOval(ctx,c.width-x,y,r,clientColor,fatLineWidth);
+		//the thin white line in the oval
+		drawOval(ctx,c.width-x,y,r,thinLineColor,1);
+		
+		//draw the line between the circles
+		// do the wide BP line
+		ctx.beginPath();
+		ctx.moveTo(x+r,y);
+		ctx.lineTo(c.width/2,y); //stop in the center
+		ctx.strokeStyle=bpColor;
+		ctx.lineWidth=fatLineWidth;
+		ctx.stroke();
+		//switch to the client color
+		ctx.strokeStyle=clientColor;
+		ctx.beginPath();
+		ctx.moveTo(c.width/2,y);
+		ctx.lineTo(c.width-x-r,y);
+		ctx.stroke();
+		// do the thin line
+		ctx.beginPath();
+		ctx.moveTo(x+r,y);
+		ctx.lineTo(c.width-x-r,y);
+		ctx.lineWidth=thinLineWidth;
+		ctx.strokeStyle=thinLineColor;
+		ctx.stroke();			
 		}
 	
 	function bumpPage(event, template) 
