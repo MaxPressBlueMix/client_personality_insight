@@ -1,4 +1,7 @@
 
+var bpImage=null;
+
+
 function resizeCanvas() {
 	var c = document.getElementById("p-photos");
 	c.width = window.innerWidth;//*.986;
@@ -19,40 +22,86 @@ function drawOval(context,x,y,radius,color,lineWidth)
 	context.stroke();	
 	}
 
+function drawBpPicture()
+	{
+	var c = document.getElementById("p-photos");
+	var ctx = c.getContext("2d");
+	bpImage=document.createElement("IMG");
+
+	ctx.drawImage(bpImage,20,20,120,120);
+	}
+
+function badBpPicture()
+	{
+	
+	}
 
 if (Meteor.isClient) {
+	Session.setDefault("bpProfile",{"name":"Jim Hoskins", "photo":"images/jim.jpg","twitterId":"jimhoskins"});
 	Session.set('pageNumber',1);
 	Session.set("clientProfile",null);
 	window.addEventListener('resize', resizeCanvas, false);
 	
 	function buildGraph()
 		{
-//		var profile=Session.get("clientProfile");
-//		console.log("client profile is ");
-//		console.log(profile);
 		if (comparePageNums(2))
 			{
-			// draw the picture circles
+			//get the images loading
+//			bpImage.src=Session.get("bpProfile").photo;
+//			bpImage.onload=drawBpPicture;
+//			bpImage.onerror=badBpPicture;
+			
+			//set up some variables to draw the ovals
 			var c = document.getElementById("p-photos");
 			var ctx = c.getContext("2d");
-			
+
+			var clientColor="#A364FB";
+			var bpColor="#02d896";
+			var thinLineColor="white";
+			var fatLineWidth=c.height*0.1;
+			var thinLineWidth=1;
+
 			// BP picture circle
 			var x=c.width/6.7;
 			var y=c.height*.44;
 			var r=(c.height*.66)/2;
 			//the thick oval
-			drawOval(ctx,x,y,r,"#02d896",c.height*0.1);
+			drawOval(ctx,x,y,r,bpColor,fatLineWidth);
 			//the thin white line in the oval
-			drawOval(ctx,x,y,r,"white",1);
+			drawOval(ctx,x,y,r,thinLineColor,thinLineWidth);
 			
+			//draw the line between the circles
+		//	ctx.save(); //save where we are for later
+			// do the wide BP line
+			ctx.beginPath();
+			ctx.moveTo(x+r,y);
+			ctx.lineTo(c.width/2,y); //stop in the center
+			ctx.strokeStyle=bpColor;
+			ctx.lineWidth=fatLineWidth;
+			ctx.stroke();
+			//switch to the client color
+			ctx.strokeStyle=clientColor;
+			ctx.beginPath();
+			ctx.moveTo(c.width/2,y);
+			ctx.lineTo(c.width*.78,y);
+			ctx.stroke();
+			//go back and do the thin line
+		//	ctx.restore();
+			ctx.beginPath();
+			ctx.moveTo(x+r,y);
+			ctx.lineTo(c.width*.78,y);
+			ctx.lineWidth=thinLineWidth;
+			ctx.strokeStyle=thinLineColor;
+			ctx.stroke();
+				
 			// Client picture circle
 			x=c.width-x;
 			//the thick oval
-			drawOval(ctx,x,y,r,"#A364FB",c.height*0.1);
+			drawOval(ctx,x,y,r,clientColor,fatLineWidth);
 			//the thin white line in the oval
-			drawOval(ctx,x,y,r,"white",1);
+			drawOval(ctx,x,y,r,thinLineColor,1);
 			
-
+			
 			}
 		}
 	
