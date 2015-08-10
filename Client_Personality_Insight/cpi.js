@@ -28,13 +28,39 @@ function drawOval(context,x,y,radius,color,lineWidth)
 	context.stroke();	
 	}
 
+function drawClientPicture()
+	{
+	var c = document.getElementById("p-photos");
+	var ctx = c.getContext("2d");
+
+	var fatLineWidth=c.height*0.1;	
+	var x=c.width-c.width/6.7;
+	var y=c.height*.44;
+	var r=(c.height*.66)/2;
+	var w=r*2-fatLineWidth;
+	var h=w;
+	ctx.drawImage(clImage,x-w/2,y-h/2,w,h);
+	drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+	}
+
+function badClientPicture()
+	{
+	
+	}
+
 function drawBpPicture()
 	{
 	var c = document.getElementById("p-photos");
 	var ctx = c.getContext("2d");
-	bpImage=document.createElement("IMG");
 
-	ctx.drawImage(bpImage,20,20,120,120);
+	var fatLineWidth=c.height*0.1;	
+	var x=c.width/6.7;
+	var y=c.height*.44;
+	var r=(c.height*.66)/2;
+	var w=r*2-fatLineWidth;
+	var h=w;
+	ctx.drawImage(bpImage,x-w/2,y-h/2,w,h);
+	drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
 	}
 
 function badBpPicture()
@@ -117,12 +143,14 @@ if (Meteor.isClient) {
 			clDot.src="images/clientcircle.png";
 			bpDot.onload=drawBpDots;
 			clDot.onload=drawClDots;
-//			bpImage.src=Session.get("bpProfile").photo;
-//			bpImage.onload=drawBpPicture;
-//			bpImage.onerror=badBpPicture;
+			bpImage.src=Session.get("bpProfile").photo;
+			bpImage.onload=drawBpPicture;
+			bpImage.onerror=badBpPicture;
+			clImage.src=Session.get("clientProfile").photo;
+			clImage.onload=drawClientPicture;
+			clImage.onerror=badClientPicture;
 			var bpProfile=Session.get("bpProfile");
 			var clientProfile=Session.get("clientProfile");
-			drawSummarySection(bpProfile,clientProfile);
 			drawSliders(bpProfile,clientProfile);
 			}
 		}
@@ -166,8 +194,8 @@ if (Meteor.isClient) {
 		var c = document.getElementById("p-photos");
 		var ctx = c.getContext("2d");
 
-		var clientColor="#A364FB";
-		var bpColor="#02d896";
+		var clientColor="#09afeb";
+		var bpColor="#8dc53e";
 		var thinLineColor="white";
 		var fatLineWidth=c.height*0.1;
 		var thinLineWidth=1;
@@ -176,12 +204,16 @@ if (Meteor.isClient) {
 		var x=c.width/6.7;
 		var y=c.height*.44;
 		var r=(c.height*.66)/2;
+		//get rid of the photo corners
+		drawOval(ctx,x,y,r+fatLineWidth,"white",fatLineWidth);
 		//the thick oval
 		drawOval(ctx,x,y,r,bpColor,fatLineWidth);
 		//the thin white line in the oval
 		drawOval(ctx,x,y,r,thinLineColor,thinLineWidth);
 		
 		// Client picture circle
+		//get rid of the photo corners
+		drawOval(ctx,c.width-x,y,r+fatLineWidth,"white",fatLineWidth);
 		//the thick oval
 		drawOval(ctx,c.width-x,y,r,clientColor,fatLineWidth);
 		//the thin white line in the oval
@@ -214,17 +246,63 @@ if (Meteor.isClient) {
 		ctx.font = "2em Arial";
 		var txt=Session.get("score")+"%";
 		var width=ctx.measureText(txt).width;
-		var height=c.height/4;
+		var pctBoxHeight=c.height/4;
 		var x1=(c.width/2)-(width/2);
-		var y1=y-height/2;
+		var y1=y-pctBoxHeight/2;
 		var pad=width*.08;
 		ctx.strokeStyle="black";
 		ctx.lineWidth=1;
-		ctx.fillRect(x1-pad,y1,width+(pad*2),height);
+		ctx.fillStyle="#000000";
+		ctx.fillRect(x1-pad,y1,width+(pad*2),pctBoxHeight);
 		ctx.stroke();
 		ctx.beginPath();
 		ctx.fillStyle="#F7C611";
-		ctx.fillText(txt,x1,y1+height*.75);
+		ctx.fillText(txt,x1,y1+pctBoxHeight*.75);
+		ctx.stroke();
+		
+		//the descriptive text
+		ctx.beginPath();
+		ctx.font = "1em Arial";
+		txt=", your Twitter personality is";
+		var width1=ctx.measureText(bpProfile.name).width;
+		var width2=ctx.measureText(txt).width;
+		ctx.fillStyle=bpColor;
+		ctx.fillText(bpProfile.name,c.width/2-(width1+width2)/2,c.height/5);
+		ctx.fillStyle="black";
+		ctx.fillText(txt,(c.width/2-(width1+width2)/2)+width1,c.height/5);
+		ctx.stroke();
+		
+		//the "similar to" part
+		ctx.beginPath();
+		txt="similar to";
+		width=ctx.measureText(txt).width;
+		var txtHeight=ctx.measureText("M").width; //hokey hack, there's no .height property
+		ctx.fillStyle="black";
+		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight+pad);
+		ctx.stroke();
+
+		//the client's name
+		ctx.beginPath();
+		txt=clientProfile.name;
+		width=ctx.measureText(txt).width;
+		ctx.fillStyle=clientColor;
+		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight*2+pad*2);
+		ctx.stroke();
+		
+		//the BP's twitter ID
+		ctx.beginPath();
+		txt="@"+bpProfile.twitterId;
+		width=ctx.measureText(txt).width;
+		ctx.fillStyle=bpColor;
+		ctx.fillText(txt,x-width/2,y+r+fatLineWidth+txtHeight);
+		ctx.stroke();
+		
+		//the client's twitter ID
+		ctx.beginPath();
+		txt="@"+clientProfile.twitterId;
+		width=ctx.measureText(txt).width;
+		ctx.fillStyle=clientColor;
+		ctx.fillText(txt,c.width-x-width/2,y+r+fatLineWidth+txtHeight);
 		ctx.stroke();
 		}
 	
