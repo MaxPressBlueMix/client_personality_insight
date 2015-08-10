@@ -1,6 +1,12 @@
 
-var bpImage=null;
-
+function getClientName()
+	{
+	var name="";
+	var profile=Session.get("clientProfile");
+	if (profile!=null)
+		name=profile.name;
+	return name;
+	}
 
 function resizeCanvas() {
 	var c = document.getElementById("p-photos");
@@ -36,10 +42,70 @@ function badBpPicture()
 	
 	}
 
+function drawBpDots()
+	{
+	var profile=Session.get("bpProfile");
+	console.log(profile);
+	console.log(profile.score);
+	if (profile!=null)
+		{
+		drawDot("cautiouscurious",profile.score.cautiouscurious,bpDot);
+		drawDot("organizedeasygoing",profile.score.organizedeasygoing,bpDot);
+		drawDot("outgoingreserved",profile.score.outgoingreserved,bpDot);
+		drawDot("sensitiveconfident",profile.score.sensitiveconfident,bpDot);
+		drawDot("caringanalytical",profile.score.caringanalytical,bpDot);
+		}
+	}
+
+function drawClDots()
+	{
+	var profile=Session.get("clientProfile");
+	console.log(profile);
+	console.log(profile.score);
+	if (profile!=null)
+		{
+		drawDot("cautiouscurious",profile.score.cautiouscurious,clDot);
+		drawDot("organizedeasygoing",profile.score.organizedeasygoing,clDot);
+		drawDot("outgoingreserved",profile.score.outgoingreserved,clDot);
+		drawDot("sensitiveconfident",profile.score.sensitiveconfident,clDot);
+		drawDot("caringanalytical",profile.score.caringanalytical,clDot);
+		}
+	}
+
+function drawDot(canvas,value,image)
+	{
+	var c = document.getElementById(canvas);
+	var ctx = c.getContext("2d");
+	var size=c.height*.75;
+	var y=(c.height-size)/2;
+	ctx.drawImage(image,c.width*(value/100),y,size,size);
+	}
+
 if (Meteor.isClient) {
-	Session.setDefault("bpProfile",{"name":"Jim Hoskins", "photo":"images/jim.jpg","twitterId":"jimhoskins"});
+	var bpImage=new Image(200,200);
+	var clImage=new Image(200,200);
+	var bpDot=new Image(20,20);
+	var clDot=new Image(20,20);
+	
+	Session.set("score",67);
+	Session.set("bpProfile",{"name":"Jim Hoskins", 
+									"photo":"images/jim.jpg",
+									"twitterId":"jimhoskins",
+									"score":{"cautiouscurious":10,
+											 "organizedeasygoing":20,
+											 "outgoingreserved":30,
+											 "sensitiveconfident":60,
+											 "caringanalytical":87}});
+	Session.set("clientProfile",{"name":"John Koshins", 
+										"photo":"images/scream.gif",
+										"twitterId":"johnkoshins",
+										"score":{"cautiouscurious":40,
+												 "organizedeasygoing":30,
+												 "outgoingreserved":35,
+												 "sensitiveconfident":22,
+												 "caringanalytical":50}});
+	
 	Session.set('pageNumber',1);
-	Session.set("clientProfile",null);
 	window.addEventListener('resize', resizeCanvas, false);
 	
 	function buildGraph()
@@ -47,26 +113,54 @@ if (Meteor.isClient) {
 		if (comparePageNums(2))
 			{
 			//get the images loading
+			bpDot.src="images/partnercircle.png";
+			clDot.src="images/clientcircle.png";
+			bpDot.onload=drawBpDots;
+			clDot.onload=drawClDots;
 //			bpImage.src=Session.get("bpProfile").photo;
 //			bpImage.onload=drawBpPicture;
 //			bpImage.onerror=badBpPicture;
-			drawSummarySection();
-			drawSliders();
+			var bpProfile=Session.get("bpProfile");
+			var clientProfile=Session.get("clientProfile");
+			drawSummarySection(bpProfile,clientProfile);
+			drawSliders(bpProfile,clientProfile);
 			}
 		}
 	
 	/*
 	 * Draws the sliders with the dots
 	 */
-	function drawSliders()
+	function drawSliders(bpProfile,clientProfile)
 		{
-		
+		console.log(bpProfile.score.cautiouscurious);
+		drawSlider("cautiouscurious");
+		drawSlider("organizedeasygoing");
+		drawSlider("outgoingreserved");
+		drawSlider("sensitiveconfident");
+		drawSlider("caringanalytical");
+		}
+	
+	/*
+	 * Draws a slider with the dots
+	 */
+	function drawSlider(canvas,partner,client)
+		{
+		var c = document.getElementById(canvas);
+		c.height=25;
+		var ctx = c.getContext("2d");
+		ctx.beginPath();
+		ctx.strokeStyle="#9AA5A9";
+		ctx.lineCap="round";
+		ctx.lineWidth=4;
+		ctx.moveTo(c.width/20,c.height/2-0.5);
+		ctx.lineTo(c.width-(c.width/20),c.height/2-0.5);
+		ctx.stroke();
 		}
 	
 	/*
 	 * Draws the section with the photos and summary
 	 */
-	function drawSummarySection()
+	function drawSummarySection(bpProfile,clientProfile)
 		{
 		//set up some variables to draw the ovals
 		var c = document.getElementById("p-photos");
@@ -113,7 +207,25 @@ if (Meteor.isClient) {
 		ctx.lineTo(c.width-x-r,y);
 		ctx.lineWidth=thinLineWidth;
 		ctx.strokeStyle=thinLineColor;
-		ctx.stroke();			
+		ctx.stroke();
+		
+		//the box with the percentage
+		ctx.beginPath();
+		ctx.font = "2em Arial";
+		var txt=Session.get("score")+"%";
+		var width=ctx.measureText(txt).width;
+		var height=c.height/4;
+		var x1=(c.width/2)-(width/2);
+		var y1=y-height/2;
+		var pad=width*.08;
+		ctx.strokeStyle="black";
+		ctx.lineWidth=1;
+		ctx.fillRect(x1-pad,y1,width+(pad*2),height);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.fillStyle="#F7C611";
+		ctx.fillText(txt,x1,y1+height*.75);
+		ctx.stroke();
 		}
 	
 	function bumpPage(event, template) 
@@ -192,7 +304,7 @@ if (Meteor.isClient) {
 			
 			profile=""; //fake it
 			}
-		Session.set("clientProfile",profile);
+//		Session.set("clientProfile",profile);
 		}
 	
 	function increasePageNumber()
@@ -256,7 +368,8 @@ if (Meteor.isClient) {
 		
 		pageIs: comparePageNums,
 		clientProfile: getTwitterUser,
-		personality: buildGraph
+		personality: buildGraph,
+		clientName: getClientName
 		});
 
 //  Template.client.onRendered(function() 
