@@ -194,8 +194,8 @@ if (Meteor.isClient) {
 		var c = document.getElementById("p-photos");
 		var ctx = c.getContext("2d");
 
-		var clientColor="#09afeb";
-		var bpColor="#8dc53e";
+		var bpColor="#09afeb";
+		var clientColor="#8dc53e";
 		var thinLineColor="white";
 		var fatLineWidth=c.height*0.1;
 		var thinLineWidth=1;
@@ -342,6 +342,36 @@ if (Meteor.isClient) {
 		{
 		return Session.get('pageNumber')==pageNum;
 		}
+
+	function getPartnerTwitterId()
+		{
+		var id="";
+		var profile=Session.get("bpProfile");
+		if (profile!=null)
+			id=profile.twitterId;
+		return id;
+		}
+
+	function getClientTwitterId()
+		{
+		var id="";
+		var profile=Session.get("clientProfile");
+		if (profile!=null)
+			id=profile.twitterId;
+		return id;
+		}
+	
+	function getClientFirstName()
+		{
+		var name="";
+		var profile=Session.get("clientProfile");
+		if (profile!=null)
+			{
+			name=profile.name;
+			name=name.split(" ")[0];
+			}
+		return name;
+		}
 	
 	function getTwitterUser()
 		{
@@ -447,7 +477,10 @@ if (Meteor.isClient) {
 		pageIs: comparePageNums,
 		clientProfile: getTwitterUser,
 		personality: buildGraph,
-		clientName: getClientName
+		clientName: getClientName,
+		partnerTwitterId:getPartnerTwitterId,
+		clientTwitterId:getClientTwitterId,
+		clientFirstName:getClientFirstName
 		});
 
 //  Template.client.onRendered(function() 

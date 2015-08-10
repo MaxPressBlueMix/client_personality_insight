@@ -141,6 +141,22 @@ a {
 	width: 100%;
 }
 
+.centre {
+	text-align: center;
+}
+
+.bigGreen {
+	color: white;
+	background-color: #8dc53e;
+	font-size: 1.3em;
+	position: relative;
+	align-items: center;
+	width: 80%;
+	left: 10%;
+	padding-top: 5%;
+	padding-bottom: 5%;
+}
+
 #page1 {
     height: 100%;
     z-index: 10;
