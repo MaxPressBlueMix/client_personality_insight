@@ -1,4 +1,8 @@
 
+var bpColor="#09afeb";
+var clientColor="#8dc53e";
+
+		
 function getClientName()
 	{
 	var name="";
@@ -75,11 +79,11 @@ function drawBpDots()
 	console.log(profile.score);
 	if (profile!=null)
 		{
-		drawDot("cautiouscurious",profile.score.cautiouscurious,bpDot);
-		drawDot("organizedeasygoing",profile.score.organizedeasygoing,bpDot);
-		drawDot("outgoingreserved",profile.score.outgoingreserved,bpDot);
-		drawDot("sensitiveconfident",profile.score.sensitiveconfident,bpDot);
-		drawDot("caringanalytical",profile.score.caringanalytical,bpDot);
+		drawDot("cautiouscurious",profile.score.cautiouscurious,bpColor);
+		drawDot("organizedeasygoing",profile.score.organizedeasygoing,bpColor);
+		drawDot("outgoingreserved",profile.score.outgoingreserved,bpColor);
+		drawDot("sensitiveconfident",profile.score.sensitiveconfident,bpColor);
+		drawDot("caringanalytical",profile.score.caringanalytical,bpColor);
 		}
 	}
 
@@ -90,28 +94,35 @@ function drawClDots()
 	console.log(profile.score);
 	if (profile!=null)
 		{
-		drawDot("cautiouscurious",profile.score.cautiouscurious,clDot);
-		drawDot("organizedeasygoing",profile.score.organizedeasygoing,clDot);
-		drawDot("outgoingreserved",profile.score.outgoingreserved,clDot);
-		drawDot("sensitiveconfident",profile.score.sensitiveconfident,clDot);
-		drawDot("caringanalytical",profile.score.caringanalytical,clDot);
+		drawDot("cautiouscurious",profile.score.cautiouscurious,clientColor);
+		drawDot("organizedeasygoing",profile.score.organizedeasygoing,clientColor);
+		drawDot("outgoingreserved",profile.score.outgoingreserved,clientColor);
+		drawDot("sensitiveconfident",profile.score.sensitiveconfident,clientColor);
+		drawDot("caringanalytical",profile.score.caringanalytical,clientColor);
 		}
 	}
 
-function drawDot(canvas,value,image)
+function drawDot(canvas,value,color)
 	{
 	var c = document.getElementById(canvas);
 	var ctx = c.getContext("2d");
-	var size=c.height*.75;
+	var size=c.height*.7;
 	var y=(c.height-size)/2;
-	ctx.drawImage(image,c.width*(value/100),y,size,size);
+//	ctx.drawImage(image,c.width*(value/100),y,size,size);
+	y=c.height/2;
+	ctx.strokeStyle=color;
+	ctx.fillStyle=color;
+	ctx.beginPath();
+	ctx.arc(c.width*(value/100),y,size/2,0,2*Math.PI);
+	ctx.fill();
+	ctx.stroke();
 	}
 
 if (Meteor.isClient) {
 	var bpImage=new Image(200,200);
 	var clImage=new Image(200,200);
-	var bpDot=new Image(20,20);
-	var clDot=new Image(20,20);
+//	var bpDot=new Image(20,20);
+//	var clDot=new Image(20,20);
 	
 	Session.set("score",67);
 	Session.set("bpProfile",{"name":"Jim Hoskins", 
@@ -139,10 +150,10 @@ if (Meteor.isClient) {
 		if (comparePageNums(2))
 			{
 			//get the images loading
-			bpDot.src="images/partnercircle.png";
-			clDot.src="images/clientcircle.png";
-			bpDot.onload=drawBpDots;
-			clDot.onload=drawClDots;
+//			bpDot.src="images/partnercircle.png";
+//			clDot.src="images/clientcircle.png";
+//			bpDot.onload=drawBpDots;
+//			clDot.onload=drawClDots;
 			bpImage.src=Session.get("bpProfile").photo;
 			bpImage.onload=drawBpPicture;
 			bpImage.onerror=badBpPicture;
@@ -152,6 +163,8 @@ if (Meteor.isClient) {
 			var bpProfile=Session.get("bpProfile");
 			var clientProfile=Session.get("clientProfile");
 			drawSliders(bpProfile,clientProfile);
+			drawBpDots();
+			drawClDots();
 			}
 		}
 	
@@ -194,8 +207,6 @@ if (Meteor.isClient) {
 		var c = document.getElementById("p-photos");
 		var ctx = c.getContext("2d");
 
-		var bpColor="#09afeb";
-		var clientColor="#8dc53e";
 		var thinLineColor="white";
 		var fatLineWidth=c.height*0.1;
 		var thinLineWidth=1;
@@ -243,7 +254,7 @@ if (Meteor.isClient) {
 		
 		//the box with the percentage
 		ctx.beginPath();
-		ctx.font = "2em Arial";
+		ctx.font = "5.0vh Arial";
 		var txt=Session.get("score")+"%";
 		var width=ctx.measureText(txt).width;
 		var pctBoxHeight=c.height/4;
@@ -262,7 +273,7 @@ if (Meteor.isClient) {
 		
 		//the descriptive text
 		ctx.beginPath();
-		ctx.font = "1em Arial";
+		ctx.font = "2.5vw Arial";
 		txt=", your Twitter personality is";
 		var width1=ctx.measureText(bpProfile.name).width;
 		var width2=ctx.measureText(txt).width;

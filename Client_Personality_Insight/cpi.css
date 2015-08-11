@@ -115,12 +115,12 @@ a {
     height: 8%;
     visibility: inherit;
     text-align: center;
-    font-size: 2em;
+    font-size: 5vh;
 }
 
 #p-photos {
 	background-color: white;
-	position: absolute;
+	position: relative;
     visibility: inherit;
     max-width: 600px;    
 /*	border: solid 2px red; */
@@ -128,8 +128,8 @@ a {
 
 #p-compat {
 /*	border: solid 2px red; */
-	position: absolute;
-    top: 35%;
+	position: relative;
+	top: 10px;
     width: 100%;    
 }
 
