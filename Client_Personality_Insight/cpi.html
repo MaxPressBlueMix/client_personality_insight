@@ -16,7 +16,7 @@
 <template name="page">
   {{#HammerTouchArea gestureMap=templateGestures}}
 		<div id="page1" class="row">
-			<div class="col-lg-12">
+			<div>
 				<div class="row top-nav">
 					<div class="col-lg-12">
 						<h3 class="heading left">
@@ -76,7 +76,7 @@
  						</tr>
  					</table>
  				<br>
- 				<p class="centre"><img src="/images/partnercircle.png" width=10 height=10> {{partnerTwitterId}}&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/clientcircle.png" width=10 height=10> {{clientTwitterId}}</p>	
+ 				<p class="centre"><img src="/images/clientcircle.png" width=10 height=10> {{clientTwitterId}}&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/partnercircle.png" width=10 height=10> {{partnerTwitterId}}</p>	
  				<br><br>
  				<button class="bigGreen">Connect with {{clientFirstName}}</button>
  				</div> 
@@ -112,8 +112,6 @@
 			<tr><td class="in-label">Your Twitter Handle:&nbsp;</td>
 			    <td colspan=2><input name="twittername" autocomplete="off" class="full-width"></td></tr>
 			<br>
-			<tr><td class="in-label">Your Twitter Password:&nbsp;</td>
-			    <td colspan=2><input type="password" name="twitterpass" autocomplete="off" class="full-width"></td></tr>
 			</table>
 			<br>
 		</fieldset>

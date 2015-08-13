@@ -38,7 +38,7 @@ function drawClientPicture()
 	var ctx = c.getContext("2d");
 
 	var fatLineWidth=c.height*0.1;	
-	var x=c.width-c.width/6.7;
+	var x=c.width/6.7;
 	var y=c.height*.44;
 	var r=(c.height*.66)/2;
 	var w=r*2-fatLineWidth;
@@ -58,7 +58,7 @@ function drawBpPicture()
 	var ctx = c.getContext("2d");
 
 	var fatLineWidth=c.height*0.1;	
-	var x=c.width/6.7;
+	var x=c.width-c.width/6.7;
 	var y=c.height*.44;
 	var r=(c.height*.66)/2;
 	var w=r*2-fatLineWidth;
@@ -211,35 +211,35 @@ if (Meteor.isClient) {
 		var fatLineWidth=c.height*0.1;
 		var thinLineWidth=1;
 
-		// BP picture circle
+		// client picture circle
 		var x=c.width/6.7;
 		var y=c.height*.44;
 		var r=(c.height*.66)/2;
 		//get rid of the photo corners
 		drawOval(ctx,x,y,r+fatLineWidth,"white",fatLineWidth);
 		//the thick oval
-		drawOval(ctx,x,y,r,bpColor,fatLineWidth);
+		drawOval(ctx,x,y,r,clientColor,fatLineWidth);
 		//the thin white line in the oval
 		drawOval(ctx,x,y,r,thinLineColor,thinLineWidth);
 		
-		// Client picture circle
+		// BP picture circle
 		//get rid of the photo corners
 		drawOval(ctx,c.width-x,y,r+fatLineWidth,"white",fatLineWidth);
 		//the thick oval
-		drawOval(ctx,c.width-x,y,r,clientColor,fatLineWidth);
+		drawOval(ctx,c.width-x,y,r,bpColor,fatLineWidth);
 		//the thin white line in the oval
 		drawOval(ctx,c.width-x,y,r,thinLineColor,1);
 		
 		//draw the line between the circles
-		// do the wide BP line
+		// do the wide client line
 		ctx.beginPath();
 		ctx.moveTo(x+r,y);
 		ctx.lineTo(c.width/2,y); //stop in the center
-		ctx.strokeStyle=bpColor;
+		ctx.strokeStyle=clientColor;
 		ctx.lineWidth=fatLineWidth;
 		ctx.stroke();
-		//switch to the client color
-		ctx.strokeStyle=clientColor;
+		//switch to the bp color
+		ctx.strokeStyle=bpColor;
 		ctx.beginPath();
 		ctx.moveTo(c.width/2,y);
 		ctx.lineTo(c.width-x-r,y);
@@ -274,30 +274,40 @@ if (Meteor.isClient) {
 		//the descriptive text
 		ctx.beginPath();
 		ctx.font = "2.5vw Arial";
-		txt=", your Twitter personality is";
-		var width1=ctx.measureText(bpProfile.name).width;
+//		txt=", your Twitter personality is";
+		txt="Similarity";
+//		var width1=ctx.measureText(bpProfile.name).width;
+		var width1=0;
 		var width2=ctx.measureText(txt).width;
-		ctx.fillStyle=bpColor;
-		ctx.fillText(bpProfile.name,c.width/2-(width1+width2)/2,c.height/5);
+//		ctx.fillStyle=bpColor;
+//		ctx.fillText(bpProfile.name,c.width/2-(width1+width2)/2,c.height/5);
 		ctx.fillStyle="black";
 		ctx.fillText(txt,(c.width/2-(width1+width2)/2)+width1,c.height/5);
 		ctx.stroke();
 		
 		//the "similar to" part
-		ctx.beginPath();
-		txt="similar to";
-		width=ctx.measureText(txt).width;
+//		ctx.beginPath();
+//		txt="similar to";
+//		width=ctx.measureText(txt).width;
 		var txtHeight=ctx.measureText("M").width; //hokey hack, there's no .height property
-		ctx.fillStyle="black";
-		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight+pad);
-		ctx.stroke();
-
-		//the client's name
+//		ctx.fillStyle="black";
+//		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight+pad);
+//		ctx.stroke();
+//
+//		//the client's name
+//		ctx.beginPath();
+//		txt=clientProfile.name;
+//		width=ctx.measureText(txt).width;
+//		ctx.fillStyle=clientColor;
+//		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight*2+pad*2);
+//		ctx.stroke();
+		
+		//the client's twitter ID
 		ctx.beginPath();
-		txt=clientProfile.name;
+		txt="@"+clientProfile.twitterId;
 		width=ctx.measureText(txt).width;
 		ctx.fillStyle=clientColor;
-		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight*2+pad*2);
+		ctx.fillText(txt,x-width/2,y+r+fatLineWidth+txtHeight);
 		ctx.stroke();
 		
 		//the BP's twitter ID
@@ -305,14 +315,6 @@ if (Meteor.isClient) {
 		txt="@"+bpProfile.twitterId;
 		width=ctx.measureText(txt).width;
 		ctx.fillStyle=bpColor;
-		ctx.fillText(txt,x-width/2,y+r+fatLineWidth+txtHeight);
-		ctx.stroke();
-		
-		//the client's twitter ID
-		ctx.beginPath();
-		txt="@"+clientProfile.twitterId;
-		width=ctx.measureText(txt).width;
-		ctx.fillStyle=clientColor;
 		ctx.fillText(txt,c.width-x-width/2,y+r+fatLineWidth+txtHeight);
 		ctx.stroke();
 		}

@@ -110,7 +110,7 @@ a {
 }
 
 #p-header {
-    background-color: #8dc53e;
+    background-color: #404041;
     color:white;
     height: 8%;
     visibility: inherit;
@@ -119,15 +119,17 @@ a {
 }
 
 #p-photos {
-	background-color: white;
+	background-color: #F2FAFC;
 	position: relative;
     visibility: inherit;
-    max-width: 600px;    
+    max-width: 600px; 
+    border-bottom: 1px solid #00b2ef;   
 /*	border: solid 2px red; */
 }
 
 #p-compat {
 /*	border: solid 2px red; */
+	background-color: white;
 	position: relative;
 	top: 10px;
     width: 100%;    
@@ -148,7 +150,7 @@ a {
 
 .bigGreen {
 	color: white;
-	background-color: #8dc53e;
+	background-color: #09afeb;
 	font-size: 1.3em;
 	position: relative;
 	align-items: center;
@@ -172,7 +174,7 @@ a {
     width: 100%;
     max-width: 600px;
     z-index: 1;
-    background-color: #546169;
+    background-color: white;
     visibility: hidden;
 }
 
