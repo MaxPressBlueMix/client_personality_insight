@@ -75,8 +75,6 @@ function badBpPicture()
 function drawBpDots()
 	{
 	var profile=Session.get("bpProfile");
-	console.log(profile);
-	console.log(profile.score);
 	if (profile!=null)
 		{
 		drawDot("cautiouscurious",profile.score.cautiouscurious,bpColor);
@@ -90,8 +88,6 @@ function drawBpDots()
 function drawClDots()
 	{
 	var profile=Session.get("clientProfile");
-	console.log(profile);
-	console.log(profile.score);
 	if (profile!=null)
 		{
 		drawDot("cautiouscurious",profile.score.cautiouscurious,clientColor);
@@ -118,9 +114,42 @@ function drawDot(canvas,value,color)
 	ctx.stroke();
 	}
 
+function drawDecorations()
+	{
+	console.log("drawing decorations");
+	var exp="";
+	var profile=Session.get("clientProfile");
+	if (profile!=null)
+		{
+		drawDecoration("cautiouscurious",profile.explain.cautiouscurious,profile.score.cautiouscurious);
+		drawDecoration("organizedeasygoing",profile.explain.organizedeasygoing,profile.score.organizedeasygoing);
+		drawDecoration("outgoingreserved",profile.explain.outgoingreserved,profile.score.outgoingreserved);
+		drawDecoration("sensitiveconfident",profile.explain.sensitiveconfident,profile.score.sensitiveconfident);
+		drawDecoration("caringanalytical",profile.explain.caringanalytical,profile.score.caringanalytical);
+		}
+	}
+
+function drawDecoration(canvas,text,position)
+	{
+	if (text.length>0)
+		{
+		var c = document.getElementById(canvas);
+		var ctx = c.getContext("2d");
+		var size=c.height*.7;
+		ctx.drawImage(dotDecImage,c.width*(position/100)-size/5,0,size,size);
+		c.addEventListener("mouseover",function(){c.title=text;});
+		}
+	}
+
+function badDecoration()
+	{
+	console.log("Unable to load dot decoration.");
+	}
+
 if (Meteor.isClient) {
 	var bpImage=new Image(200,200);
 	var clImage=new Image(200,200);
+	var dotDecImage=new Image(40,40);
 //	var bpDot=new Image(20,20);
 //	var clDot=new Image(20,20);
 	
@@ -140,7 +169,12 @@ if (Meteor.isClient) {
 												 "organizedeasygoing":30,
 												 "outgoingreserved":35,
 												 "sensitiveconfident":22,
-												 "caringanalytical":50}});
+												 "caringanalytical":50},
+										"explain":{"cautiouscurious":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl ipsum, feugiat eu ullamcorper eget, placerat et enim. Proin mattis massa ut velit vehicula feugiat. Fusce faucibus metus at tortor facilisis, sit amet porttitor sem euismod. Sed in tellus sapien. Vivamus ac ipsum ut ipsum imperdiet fermentum quis eu arcu. Vestibulum ut est dui. In quis turpis est. Fusce sit amet diam eu lacus porta hendrerit a ut augue. Maecenas odio risus, vehicula eu pretium at, scelerisque sit amet arcu. Integer vel dignissim lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed fringilla volutpat leo eget lobortis. Duis congue fermentum diam, sit amet dictum elit consectetur quis.",
+												 "organizedeasygoing":"Donec at ex id magna tincidunt facilisis. Vestibulum elit nulla, viverra ut felis id, tristique gravida turpis. Maecenas lacinia urna eleifend neque auctor mattis. Quisque sollicitudin hendrerit dui, eget luctus mauris mollis in. Aenean posuere eget leo ut hendrerit. Nulla rutrum tincidunt varius. Sed sit amet leo vel lorem rhoncus dignissim. Nam euismod sit amet felis vel porta. Duis eu ipsum mi. Nam et lectus sed eros cursus dignissim. Fusce ultrices elit semper nisl ullamcorper tincidunt. Proin nec tincidunt dui. Sed ac nunc eu odio ultrices convallis.",
+												 "outgoingreserved":"",
+												 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
+												 "caringanalytical":""}});
 	
 	Session.set('pageNumber',1);
 	window.addEventListener('resize', resizeCanvas, false);
@@ -160,6 +194,9 @@ if (Meteor.isClient) {
 			clImage.src=Session.get("clientProfile").photo;
 			clImage.onload=drawClientPicture;
 			clImage.onerror=badClientPicture;
+			dotDecImage.onload=drawDecorations;
+			dotDecImage.onerror=badDecoration;
+			dotDecImage.src="images/circledecoration.gif";
 			var bpProfile=Session.get("bpProfile");
 			var clientProfile=Session.get("clientProfile");
 			drawSliders(bpProfile,clientProfile);
@@ -173,7 +210,6 @@ if (Meteor.isClient) {
 	 */
 	function drawSliders(bpProfile,clientProfile)
 		{
-		console.log(bpProfile.score.cautiouscurious);
 		drawSlider("cautiouscurious");
 		drawSlider("organizedeasygoing");
 		drawSlider("outgoingreserved");
