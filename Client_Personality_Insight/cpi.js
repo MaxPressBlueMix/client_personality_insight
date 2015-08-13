@@ -1,6 +1,7 @@
 
 var bpColor="#09afeb";
 var clientColor="#8dc53e";
+var photoBackgroundColor="#F2FAFC";
 
 		
 function getClientName()
@@ -129,15 +130,16 @@ function drawDecorations()
 		}
 	}
 
-function drawDecoration(canvas,text,position)
+function drawDecoration(canvasName,text,position)
 	{
 	if (text.length>0)
 		{
-		var c = document.getElementById(canvas);
+		var c = document.getElementById(canvasName);
 		var ctx = c.getContext("2d");
 		var size=c.height*.7;
 		ctx.drawImage(dotDecImage,c.width*(position/100)-size/5,0,size,size);
 		c.addEventListener("mouseover",function(){c.title=text;});
+//doesn't work		c.addEventListener("hold canvas",function(){c.title=text;});
 		}
 	}
 
@@ -252,7 +254,7 @@ if (Meteor.isClient) {
 		var y=c.height*.44;
 		var r=(c.height*.66)/2;
 		//get rid of the photo corners
-		drawOval(ctx,x,y,r+fatLineWidth,"white",fatLineWidth);
+		drawOval(ctx,x,y,r+fatLineWidth,photoBackgroundColor,fatLineWidth);
 		//the thick oval
 		drawOval(ctx,x,y,r,clientColor,fatLineWidth);
 		//the thin white line in the oval
@@ -260,7 +262,7 @@ if (Meteor.isClient) {
 		
 		// BP picture circle
 		//get rid of the photo corners
-		drawOval(ctx,c.width-x,y,r+fatLineWidth,"white",fatLineWidth);
+		drawOval(ctx,c.width-x,y,r+fatLineWidth,photoBackgroundColor,fatLineWidth);
 		//the thick oval
 		drawOval(ctx,c.width-x,y,r,bpColor,fatLineWidth);
 		//the thin white line in the oval
@@ -516,7 +518,7 @@ if (Meteor.isClient) {
 		    	decreasePageNumber();
 		    	},
 		    'swipeleft div': function (event, templateInstance) {
-		    	increasePageNumber();
+		    	increasePageNumber();		    	
 		      /* `event` is the Hammer.js event object */
 		      /* `templateInstance` is the `Blaze.TemplateInstance` */
 		      /* `this` is the data context of the element in your template, so in this case `someField` from `someArray` in the template */
