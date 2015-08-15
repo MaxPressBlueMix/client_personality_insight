@@ -3,6 +3,7 @@ var bpColor="#09afeb";
 var clientColor="#8dc53e";
 var photoBackgroundColor="#F2FAFC";
 
+var userSession = new Meteor.Collection("user_sessions");
 		
 function getClientName()
 	{
@@ -18,6 +19,7 @@ function resizeCanvas() {
 	c.width = window.innerWidth;//*.986;
 	c.height = window.innerHeight/4;  //25%
 	buildGraph();
+	pageIsRendered=true;
 	}
 
 function drawOval(context,x,y,radius,color,lineWidth)
@@ -88,14 +90,14 @@ function drawBpDots()
 
 function drawClDots()
 	{
-	var profile=Session.get("clientProfile");
-	if (profile!=null)
+	var analysis=Session.get("clientAnalysis");
+	if (analysis!=null)
 		{
-		drawDot("cautiouscurious",profile.score.cautiouscurious,clientColor);
-		drawDot("organizedeasygoing",profile.score.organizedeasygoing,clientColor);
-		drawDot("outgoingreserved",profile.score.outgoingreserved,clientColor);
-		drawDot("sensitiveconfident",profile.score.sensitiveconfident,clientColor);
-		drawDot("caringanalytical",profile.score.caringanalytical,clientColor);
+		drawDot("cautiouscurious",analysis.score.cautiouscurious,clientColor);
+		drawDot("organizedeasygoing",analysis.score.organizedeasygoing,clientColor);
+		drawDot("outgoingreserved",analysis.score.outgoingreserved,clientColor);
+		drawDot("sensitiveconfident",analysis.score.sensitiveconfident,clientColor);
+		drawDot("caringanalytical",analysis.score.caringanalytical,clientColor);
 		}
 	}
 
@@ -119,14 +121,14 @@ function drawDecorations()
 	{
 	console.log("drawing decorations");
 	var exp="";
-	var profile=Session.get("clientProfile");
-	if (profile!=null)
+	var analysis=Session.get("clientAnalysis");
+	if (analysis!=null)
 		{
-		drawDecoration("cautiouscurious",profile.explain.cautiouscurious,profile.score.cautiouscurious);
-		drawDecoration("organizedeasygoing",profile.explain.organizedeasygoing,profile.score.organizedeasygoing);
-		drawDecoration("outgoingreserved",profile.explain.outgoingreserved,profile.score.outgoingreserved);
-		drawDecoration("sensitiveconfident",profile.explain.sensitiveconfident,profile.score.sensitiveconfident);
-		drawDecoration("caringanalytical",profile.explain.caringanalytical,profile.score.caringanalytical);
+		drawDecoration("cautiouscurious",analysis.explain.cautiouscurious,analysis.score.cautiouscurious);
+		drawDecoration("organizedeasygoing",analysis.explain.organizedeasygoing,analysis.score.organizedeasygoing);
+		drawDecoration("outgoingreserved",analysis.explain.outgoingreserved,analysis.score.outgoingreserved);
+		drawDecoration("sensitiveconfident",analysis.explain.sensitiveconfident,analysis.score.sensitiveconfident);
+		drawDecoration("caringanalytical",analysis.explain.caringanalytical,analysis.score.caringanalytical);
 		}
 	}
 
@@ -148,12 +150,19 @@ function badDecoration()
 	console.log("Unable to load dot decoration.");
 	}
 
+function clearCanvas(canvasName)
+	{
+	console.log("Clearing canvas: ",canvasName);
+	var c = document.getElementById(canvasName);
+	var ctx = c.getContext("2d");
+	ctx.clearRect(0, 0, c.width, c.height);
+	}
+
 if (Meteor.isClient) {
 	var bpImage=new Image(200,200);
 	var clImage=new Image(200,200);
 	var dotDecImage=new Image(40,40);
-//	var bpDot=new Image(20,20);
-//	var clDot=new Image(20,20);
+	var pageIsRendered=false;
 	
 	Session.set("score",67);
 	Session.set("bpProfile",{"name":"Jim Hoskins", 
@@ -164,19 +173,33 @@ if (Meteor.isClient) {
 											 "outgoingreserved":30,
 											 "sensitiveconfident":60,
 											 "caringanalytical":87}});
-	Session.set("clientProfile",{"name":"John Koshins", 
-										"photo":"images/scream.gif",
-										"twitterId":"johnkoshins",
-										"score":{"cautiouscurious":40,
-												 "organizedeasygoing":30,
-												 "outgoingreserved":35,
-												 "sensitiveconfident":22,
-												 "caringanalytical":50},
-										"explain":{"cautiouscurious":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl ipsum, feugiat eu ullamcorper eget, placerat et enim. Proin mattis massa ut velit vehicula feugiat. Fusce faucibus metus at tortor facilisis, sit amet porttitor sem euismod. Sed in tellus sapien. Vivamus ac ipsum ut ipsum imperdiet fermentum quis eu arcu. Vestibulum ut est dui. In quis turpis est. Fusce sit amet diam eu lacus porta hendrerit a ut augue. Maecenas odio risus, vehicula eu pretium at, scelerisque sit amet arcu. Integer vel dignissim lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed fringilla volutpat leo eget lobortis. Duis congue fermentum diam, sit amet dictum elit consectetur quis.",
-												 "organizedeasygoing":"Donec at ex id magna tincidunt facilisis. Vestibulum elit nulla, viverra ut felis id, tristique gravida turpis. Maecenas lacinia urna eleifend neque auctor mattis. Quisque sollicitudin hendrerit dui, eget luctus mauris mollis in. Aenean posuere eget leo ut hendrerit. Nulla rutrum tincidunt varius. Sed sit amet leo vel lorem rhoncus dignissim. Nam euismod sit amet felis vel porta. Duis eu ipsum mi. Nam et lectus sed eros cursus dignissim. Fusce ultrices elit semper nisl ullamcorper tincidunt. Proin nec tincidunt dui. Sed ac nunc eu odio ultrices convallis.",
-												 "outgoingreserved":"",
-												 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
-												 "caringanalytical":""}});
+	Session.set("clientProfile",null);
+	
+	Session.set("clientAnalysis",{"score":{"cautiouscurious":40,
+										 "organizedeasygoing":30,
+										 "outgoingreserved":35,
+										 "sensitiveconfident":22,
+										 "caringanalytical":50},
+								"explain":{"cautiouscurious":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl ipsum, feugiat eu ullamcorper eget, placerat et enim. Proin mattis massa ut velit vehicula feugiat. Fusce faucibus metus at tortor facilisis, sit amet porttitor sem euismod. Sed in tellus sapien. Vivamus ac ipsum ut ipsum imperdiet fermentum quis eu arcu. Vestibulum ut est dui. In quis turpis est. Fusce sit amet diam eu lacus porta hendrerit a ut augue. Maecenas odio risus, vehicula eu pretium at, scelerisque sit amet arcu. Integer vel dignissim lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed fringilla volutpat leo eget lobortis. Duis congue fermentum diam, sit amet dictum elit consectetur quis.",
+										 "organizedeasygoing":"Donec at ex id magna tincidunt facilisis. Vestibulum elit nulla, viverra ut felis id, tristique gravida turpis. Maecenas lacinia urna eleifend neque auctor mattis. Quisque sollicitudin hendrerit dui, eget luctus mauris mollis in. Aenean posuere eget leo ut hendrerit. Nulla rutrum tincidunt varius. Sed sit amet leo vel lorem rhoncus dignissim. Nam euismod sit amet felis vel porta. Duis eu ipsum mi. Nam et lectus sed eros cursus dignissim. Fusce ultrices elit semper nisl ullamcorper tincidunt. Proin nec tincidunt dui. Sed ac nunc eu odio ultrices convallis.",
+										 "outgoingreserved":"",
+										 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
+										 "caringanalytical":""}});
+
+	
+//	Session.set("clientProfile",{"name":"John Koshins", 
+//										"photo":"images/scream.gif",
+//										"twitterId":"johnkoshins",
+//										"score":{"cautiouscurious":40,
+//												 "organizedeasygoing":30,
+//												 "outgoingreserved":35,
+//												 "sensitiveconfident":22,
+//												 "caringanalytical":50},
+//										"explain":{"cautiouscurious":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl ipsum, feugiat eu ullamcorper eget, placerat et enim. Proin mattis massa ut velit vehicula feugiat. Fusce faucibus metus at tortor facilisis, sit amet porttitor sem euismod. Sed in tellus sapien. Vivamus ac ipsum ut ipsum imperdiet fermentum quis eu arcu. Vestibulum ut est dui. In quis turpis est. Fusce sit amet diam eu lacus porta hendrerit a ut augue. Maecenas odio risus, vehicula eu pretium at, scelerisque sit amet arcu. Integer vel dignissim lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed fringilla volutpat leo eget lobortis. Duis congue fermentum diam, sit amet dictum elit consectetur quis.",
+//												 "organizedeasygoing":"Donec at ex id magna tincidunt facilisis. Vestibulum elit nulla, viverra ut felis id, tristique gravida turpis. Maecenas lacinia urna eleifend neque auctor mattis. Quisque sollicitudin hendrerit dui, eget luctus mauris mollis in. Aenean posuere eget leo ut hendrerit. Nulla rutrum tincidunt varius. Sed sit amet leo vel lorem rhoncus dignissim. Nam euismod sit amet felis vel porta. Duis eu ipsum mi. Nam et lectus sed eros cursus dignissim. Fusce ultrices elit semper nisl ullamcorper tincidunt. Proin nec tincidunt dui. Sed ac nunc eu odio ultrices convallis.",
+//												 "outgoingreserved":"",
+//												 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
+//												 "caringanalytical":""}});
 	
 	Session.set('pageNumber',1);
 	window.addEventListener('resize', resizeCanvas, false);
@@ -185,25 +208,27 @@ if (Meteor.isClient) {
 		{
 		if (comparePageNums(2))
 			{
-			//get the images loading
-//			bpDot.src="images/partnercircle.png";
-//			clDot.src="images/clientcircle.png";
-//			bpDot.onload=drawBpDots;
-//			clDot.onload=drawClDots;
-			bpImage.src=Session.get("bpProfile").photo;
-			bpImage.onload=drawBpPicture;
-			bpImage.onerror=badBpPicture;
-			clImage.src=Session.get("clientProfile").photo;
-			clImage.onload=drawClientPicture;
-			clImage.onerror=badClientPicture;
-			dotDecImage.onload=drawDecorations;
-			dotDecImage.onerror=badDecoration;
-			dotDecImage.src="images/circledecoration.gif";
-			var bpProfile=Session.get("bpProfile");
 			var clientProfile=Session.get("clientProfile");
-			drawSliders(bpProfile,clientProfile);
-			drawBpDots();
-			drawClDots();
+			console.log("client profile:",clientProfile);
+			if (clientProfile!=null)
+				{
+				//get the images loading
+				console.log("Loading client and BP images...");
+				bpImage.src=Session.get("bpProfile").photo;
+				bpImage.onload=drawBpPicture;
+				bpImage.onerror=badBpPicture;
+				clImage.src=clientProfile.profile_image_url;
+				console.log("Client image is at ",clImage.src);
+				clImage.onload=drawClientPicture;
+				clImage.onerror=badClientPicture;
+				dotDecImage.onload=drawDecorations;
+				dotDecImage.onerror=badDecoration;
+				dotDecImage.src="images/circledecoration.gif";
+				var bpProfile=Session.get("bpProfile");
+				drawSliders(bpProfile,clientProfile);
+				drawBpDots();
+				drawClDots();
+				}
 			}
 		}
 	
@@ -224,6 +249,7 @@ if (Meteor.isClient) {
 	 */
 	function drawSlider(canvas,partner,client)
 		{
+		clearCanvas(canvas);
 		var c = document.getElementById(canvas);
 		c.height=25;
 		var ctx = c.getContext("2d");
@@ -241,6 +267,7 @@ if (Meteor.isClient) {
 	 */
 	function drawSummarySection(bpProfile,clientProfile)
 		{
+//		clearCanvas("p-photos");
 		//set up some variables to draw the ovals
 		var c = document.getElementById("p-photos");
 		var ctx = c.getContext("2d");
@@ -342,7 +369,7 @@ if (Meteor.isClient) {
 		
 		//the client's twitter ID
 		ctx.beginPath();
-		txt="@"+clientProfile.twitterId;
+		txt="@"+getClientTwitterId();
 		width=ctx.measureText(txt).width;
 		ctx.fillStyle=clientColor;
 		ctx.fillText(txt,x-width/2,y+r+fatLineWidth+txtHeight);
@@ -396,27 +423,29 @@ if (Meteor.isClient) {
 
 	function getPartnerTwitterId()
 		{
-		var id="";
-		var profile=Session.get("bpProfile");
-		if (profile!=null)
-			id=profile.twitterId;
-		return id;
+		if (pageIsRendered)
+			return document.getElementById("bpTwitter").value;
+		else
+			return "";
 		}
 
 	function getClientTwitterId()
 		{
-		var id="";
-		var profile=Session.get("clientProfile");
-		if (profile!=null)
-			id=profile.twitterId;
-		return id;
+		console.log("pageIsRendered:",pageIsRendered);
+		if (pageIsRendered)
+			{
+			console.log("Client Twitter handle:",document.getElementById("clientTwitter").value);
+			return document.getElementById("clientTwitter").value;
+			}
+		else
+			return "";
 		}
 	
 	function getClientFirstName()
 		{
 		var name="";
 		var profile=Session.get("clientProfile");
-		if (profile!=null)
+		if (profile!=null && profile.length>0)
 			{
 			name=profile.name;
 			name=name.split(" ")[0];
@@ -426,10 +455,15 @@ if (Meteor.isClient) {
 	
 	function getTwitterUser()
 		{
+		console.log("getTwitterUser()");
 		var profile=Session.get("clientProfile");
-		var twitterUser=document.getElementById("clientTwitter");
-		if (twitterUser!=null)
-			twitterUser=twitterUser.value;
+		console.log("profile is ",profile);
+		var twitterUser=getClientTwitterId();
+		
+		//see if twitter user has been changed
+		if (profile!=null && twitterUser!=profile.screen_name)
+			profile=null;
+		
 		if (twitterUser==null || twitterUser.length==0)
 			{
 			profile= "Please enter the client's Twitter handle.";			
@@ -446,22 +480,23 @@ if (Meteor.isClient) {
 	
 	function buildTwitterProfile(error, result)
 		{
+		console.log("Building twitter profile...");
 		var profile=null;
 		if (error)
 			{
 			profile="An error has occurred: "+error;
+			console.log("Error! ",error);
 			}
 		else
 			{
-			var iframe = document.createElement('iframe');
-			var html = result.content;
-			document.getElementById("page2").appendChild(iframe);
-			iframe.contentWindow.document.open();
-			iframe.contentWindow.document.write(html);
-			iframe.contentWindow.document.close();
-			
-			
-			profile=""; //fake it
+			console.log(result);
+			console.log("screen names:",result.screen_name,getClientTwitterId());
+			if (result.screen_name==getClientTwitterId())
+				Session.set("clientProfile",result);
+			else
+				Session.set("bpProfile",result);
+			clearCanvas("p-photos");
+			buildGraph();
 			}
 //		Session.set("clientProfile",profile);
 		}
@@ -534,12 +569,6 @@ if (Meteor.isClient) {
 		clientFirstName:getClientFirstName
 		});
 
-//  Template.client.onRendered(function() 
-//		{
-//	  	//this should make the template refresh when the client twitter name is rendered
-//	    this.autorun(getTwitterUser);  
-//	    }
-//  );
   
   Template.page.onRendered(resizeCanvas);
   
