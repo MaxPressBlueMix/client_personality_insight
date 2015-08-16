@@ -15,6 +15,8 @@ function getClientName()
 	}
 
 function resizeCanvas() {
+	document.getElementById("prev").setAttribute("disabled", "true");
+	document.getElementById("next").setAttribute("disabled", "true");
 	var c = document.getElementById("p-photos");
 	c.width = window.innerWidth;//*.986;
 	c.height = window.innerHeight/4;  //25%
@@ -163,6 +165,10 @@ if (Meteor.isClient) {
 	var clImage=new Image(200,200);
 	var dotDecImage=new Image(40,40);
 	var pageIsRendered=false;
+	var fetched=false;
+
+	Session.set("clientProfile",null);
+	Session.set("bpProfile",null);
 	
 	Session.set("score",67);
 
@@ -177,19 +183,6 @@ if (Meteor.isClient) {
 				 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
 				 "caringanalytical":""}});
 	
-	
-	
-	
-//	Session.set("bpProfile",{"name":"Jim Hoskins", 
-//									"photo":"images/jim.jpg",
-//									"twitterId":"jimhoskins",
-//									"score":{"cautiouscurious":10,
-//											 "organizedeasygoing":20,
-//											 "outgoingreserved":30,
-//											 "sensitiveconfident":60,
-//											 "caringanalytical":87}});
-	Session.set("clientProfile",null);
-	
 	Session.set("clientAnalysis",{"score":{"cautiouscurious":40,
 										 "organizedeasygoing":30,
 										 "outgoingreserved":35,
@@ -200,24 +193,15 @@ if (Meteor.isClient) {
 										 "outgoingreserved":"",
 										 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
 										 "caringanalytical":""}});
-
-	
-//	Session.set("clientProfile",{"name":"John Koshins", 
-//										"photo":"images/scream.gif",
-//										"twitterId":"johnkoshins",
-//										"score":{"cautiouscurious":40,
-//												 "organizedeasygoing":30,
-//												 "outgoingreserved":35,
-//												 "sensitiveconfident":22,
-//												 "caringanalytical":50},
-//										"explain":{"cautiouscurious":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl ipsum, feugiat eu ullamcorper eget, placerat et enim. Proin mattis massa ut velit vehicula feugiat. Fusce faucibus metus at tortor facilisis, sit amet porttitor sem euismod. Sed in tellus sapien. Vivamus ac ipsum ut ipsum imperdiet fermentum quis eu arcu. Vestibulum ut est dui. In quis turpis est. Fusce sit amet diam eu lacus porta hendrerit a ut augue. Maecenas odio risus, vehicula eu pretium at, scelerisque sit amet arcu. Integer vel dignissim lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed fringilla volutpat leo eget lobortis. Duis congue fermentum diam, sit amet dictum elit consectetur quis.",
-//												 "organizedeasygoing":"Donec at ex id magna tincidunt facilisis. Vestibulum elit nulla, viverra ut felis id, tristique gravida turpis. Maecenas lacinia urna eleifend neque auctor mattis. Quisque sollicitudin hendrerit dui, eget luctus mauris mollis in. Aenean posuere eget leo ut hendrerit. Nulla rutrum tincidunt varius. Sed sit amet leo vel lorem rhoncus dignissim. Nam euismod sit amet felis vel porta. Duis eu ipsum mi. Nam et lectus sed eros cursus dignissim. Fusce ultrices elit semper nisl ullamcorper tincidunt. Proin nec tincidunt dui. Sed ac nunc eu odio ultrices convallis.",
-//												 "outgoingreserved":"",
-//												 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
-//												 "caringanalytical":""}});
 	
 	Session.set('pageNumber',1);
 	window.addEventListener('resize', resizeCanvas, false);
+	
+	function somebodyTyped()
+		{
+		fetched=false;
+		adjustSubmitButton();
+		}
 
 	/*
 	 * Enable the submit button only if entries in both twitter handle fields
@@ -225,9 +209,15 @@ if (Meteor.isClient) {
 	function adjustSubmitButton()
 		{
 		if (getClientTwitterId().length>0 && getPartnerTwitterId().length>0)
-			document.getElementById("fetch").disabled=false;
+			{
+			document.getElementById("fetch").disabled=false; 
+			document.getElementById("next").setAttribute("disabled","false");
+			}
 		else
+			{
 			document.getElementById("fetch").disabled=true;
+			document.getElementById("next").setAttribute("disabled","true");
+			}
 		}
 
 	
@@ -331,12 +321,14 @@ if (Meteor.isClient) {
 		ctx.strokeStyle=clientColor;
 		ctx.lineWidth=fatLineWidth;
 		ctx.stroke();
+
 		//switch to the bp color
 		ctx.strokeStyle=bpColor;
 		ctx.beginPath();
 		ctx.moveTo(c.width/2,y);
 		ctx.lineTo(c.width-x-r,y);
 		ctx.stroke();
+		
 		// do the thin line
 		ctx.beginPath();
 		ctx.moveTo(x+r,y);
@@ -367,33 +359,13 @@ if (Meteor.isClient) {
 		//the descriptive text
 		ctx.beginPath();
 		ctx.font = "2.5vw Arial";
-//		txt=", your Twitter personality is";
 		txt="Similarity";
-//		var width1=ctx.measureText(bpProfile.name).width;
 		var width1=0;
 		var width2=ctx.measureText(txt).width;
-//		ctx.fillStyle=bpColor;
-//		ctx.fillText(bpProfile.name,c.width/2-(width1+width2)/2,c.height/5);
 		ctx.fillStyle="black";
 		ctx.fillText(txt,(c.width/2-(width1+width2)/2)+width1,c.height/5);
 		ctx.stroke();
-		
-		//the "similar to" part
-//		ctx.beginPath();
-//		txt="similar to";
-//		width=ctx.measureText(txt).width;
 		var txtHeight=ctx.measureText("M").width; //hokey hack, there's no .height property
-//		ctx.fillStyle="black";
-//		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight+pad);
-//		ctx.stroke();
-//
-//		//the client's name
-//		ctx.beginPath();
-//		txt=clientProfile.name;
-//		width=ctx.measureText(txt).width;
-//		ctx.fillStyle=clientColor;
-//		ctx.fillText(txt,c.width/2-width/2,y+pctBoxHeight/2+txtHeight*2+pad*2);
-//		ctx.stroke();
 		
 		//the client's twitter ID
 		ctx.beginPath();
@@ -414,8 +386,14 @@ if (Meteor.isClient) {
 
 	function fetch(event) 
 		{
-		fetchClientTwitterProfile(event);
-		fetchBPTwitterProfile(event);
+		if (event)
+			{
+			event.preventDefault(); // We'll handle it
+			event.stopPropagation();
+			}
+		fetchClientTwitterProfile();
+		fetchBPTwitterProfile();
+		fetched=true;
 		increasePageNumber();//slide in next page		
 		}
 	
@@ -423,9 +401,12 @@ if (Meteor.isClient) {
 		{
 		event.preventDefault(); // We'll handle it
 		event.stopPropagation();
-		if (event.target.name=="prev")
+		var prevDisabled=document.getElementById("prev").getAttribute("disabled")=="true";
+		var nextDisabled=document.getElementById("next").getAttribute("disabled")=="true";
+		console.log(prevDisabled+"/"+nextDisabled);
+		if (event.target.name=="prev" && !prevDisabled)
 			decreasePageNumber();//slide in previous page
-		else if (event.target.name=="next")
+		else if (event.target.name=="next" && !nextDisabled)
 			increasePageNumber();//slide in next page
 		return false;
 		}
@@ -475,10 +456,8 @@ if (Meteor.isClient) {
 		return getClientName().split(" ")[0];
 		}
 
-	function fetchBPTwitterProfile(event)
+	function fetchBPTwitterProfile()
 		{
-		event.preventDefault(); // We'll handle it
-		event.stopPropagation();
 		var profile=Session.get("bpProfile");
 		var twitterUser=getPartnerTwitterId();
 		fetchTwitterProfile(profile,twitterUser);
@@ -486,10 +465,8 @@ if (Meteor.isClient) {
 		}
 	
 	
-	function fetchClientTwitterProfile(event)
+	function fetchClientTwitterProfile()
 		{
-		event.preventDefault(); // We'll handle it
-		event.stopPropagation();
 		var profile=Session.get("clientProfile");
 		var twitterUser=getClientTwitterId();
 		fetchTwitterProfile(profile,twitterUser);
@@ -541,6 +518,8 @@ if (Meteor.isClient) {
 	function increasePageNumber()
 		{
 		var page=Session.get('pageNumber');
+		if (page==1 && !fetched)
+			fetch();
 		var whichPage=document.getElementById("page"+page);
     	whichPage.style.zIndex ="1"; //old page
     	whichPage.style.visibility ="hidden"; //hide it
@@ -562,6 +541,7 @@ if (Meteor.isClient) {
 	    	whichPage.style.zIndex ="10"; //new page
 	    	whichPage.className += " slideLeft"; //slide it
     		}
+    	document.getElementById("prev").setAttribute("disabled","false");
 		}
 	
 	function decreasePageNumber()
@@ -582,6 +562,11 @@ if (Meteor.isClient) {
 		whichPage.style.visibility ="visible"; //show it
 		whichPage.style.zIndex ="10"; //new page
 		whichPage.className += " slideRight"; //slide it
+		
+		if (page==1)
+			document.getElementById("prev").setAttribute("disabled","true");
+		else
+			document.getElementById("prev").setAttribute("disabled","false");
 		}
 
 	Template.page.helpers({
@@ -611,7 +596,7 @@ if (Meteor.isClient) {
   Template.client.events({
 	    'click #lookitup': openLookup,
 	    'click #close': closeLookup,
-	    'keyup #clientTwitter, keyup #bpTwitter': adjustSubmitButton
+	    'keyup #clientTwitter, keyup #bpTwitter': somebodyTyped
 	  });
 
   Template.page.events({
