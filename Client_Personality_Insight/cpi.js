@@ -77,14 +77,14 @@ function badBpPicture()
 
 function drawBpDots()
 	{
-	var profile=Session.get("bpProfile");
-	if (profile!=null)
+	var analysis=Session.get("bpAnalysis");
+	if (analysis!=null)
 		{
-		drawDot("cautiouscurious",profile.score.cautiouscurious,bpColor);
-		drawDot("organizedeasygoing",profile.score.organizedeasygoing,bpColor);
-		drawDot("outgoingreserved",profile.score.outgoingreserved,bpColor);
-		drawDot("sensitiveconfident",profile.score.sensitiveconfident,bpColor);
-		drawDot("caringanalytical",profile.score.caringanalytical,bpColor);
+		drawDot("cautiouscurious",analysis.score.cautiouscurious,bpColor);
+		drawDot("organizedeasygoing",analysis.score.organizedeasygoing,bpColor);
+		drawDot("outgoingreserved",analysis.score.outgoingreserved,bpColor);
+		drawDot("sensitiveconfident",analysis.score.sensitiveconfident,bpColor);
+		drawDot("caringanalytical",analysis.score.caringanalytical,bpColor);
 		}
 	}
 
@@ -165,14 +165,29 @@ if (Meteor.isClient) {
 	var pageIsRendered=false;
 	
 	Session.set("score",67);
-	Session.set("bpProfile",{"name":"Jim Hoskins", 
-									"photo":"images/jim.jpg",
-									"twitterId":"jimhoskins",
-									"score":{"cautiouscurious":10,
-											 "organizedeasygoing":20,
-											 "outgoingreserved":30,
-											 "sensitiveconfident":60,
-											 "caringanalytical":87}});
+
+	Session.set("bpAnalysis",{"score":{"cautiouscurious":10,
+				 "organizedeasygoing":20,
+				 "outgoingreserved":30,
+				 "sensitiveconfident":60,
+				 "caringanalytical":87},
+			"explain":{"cautiouscurious":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl ipsum, feugiat eu ullamcorper eget, placerat et enim. Proin mattis massa ut velit vehicula feugiat. Fusce faucibus metus at tortor facilisis, sit amet porttitor sem euismod. Sed in tellus sapien. Vivamus ac ipsum ut ipsum imperdiet fermentum quis eu arcu. Vestibulum ut est dui. In quis turpis est. Fusce sit amet diam eu lacus porta hendrerit a ut augue. Maecenas odio risus, vehicula eu pretium at, scelerisque sit amet arcu. Integer vel dignissim lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed fringilla volutpat leo eget lobortis. Duis congue fermentum diam, sit amet dictum elit consectetur quis.",
+				 "organizedeasygoing":"Donec at ex id magna tincidunt facilisis. Vestibulum elit nulla, viverra ut felis id, tristique gravida turpis. Maecenas lacinia urna eleifend neque auctor mattis. Quisque sollicitudin hendrerit dui, eget luctus mauris mollis in. Aenean posuere eget leo ut hendrerit. Nulla rutrum tincidunt varius. Sed sit amet leo vel lorem rhoncus dignissim. Nam euismod sit amet felis vel porta. Duis eu ipsum mi. Nam et lectus sed eros cursus dignissim. Fusce ultrices elit semper nisl ullamcorper tincidunt. Proin nec tincidunt dui. Sed ac nunc eu odio ultrices convallis.",
+				 "outgoingreserved":"",
+				 "sensitiveconfident":"Maecenas volutpat ornare dolor, et iaculis ligula fringilla ut. Nunc pharetra, lectus ut efficitur molestie, odio sapien vestibulum felis, nec dapibus mauris sem id felis. Maecenas tempor sagittis est, eget varius nisl consequat at. Donec vitae facilisis ex. In nec ligula mollis, congue nulla at, imperdiet leo. Aenean sit amet tortor a velit gravida commodo. In sem nulla, eleifend sit amet ex vel, pharetra varius mauris. Nunc dapibus justo vitae placerat dictum. Morbi tristique nunc a orci ullamcorper, a finibus erat elementum. Maecenas faucibus ex in dignissim accumsan.",
+				 "caringanalytical":""}});
+	
+	
+	
+	
+//	Session.set("bpProfile",{"name":"Jim Hoskins", 
+//									"photo":"images/jim.jpg",
+//									"twitterId":"jimhoskins",
+//									"score":{"cautiouscurious":10,
+//											 "organizedeasygoing":20,
+//											 "outgoingreserved":30,
+//											 "sensitiveconfident":60,
+//											 "caringanalytical":87}});
 	Session.set("clientProfile",null);
 	
 	Session.set("clientAnalysis",{"score":{"cautiouscurious":40,
@@ -203,18 +218,31 @@ if (Meteor.isClient) {
 	
 	Session.set('pageNumber',1);
 	window.addEventListener('resize', resizeCanvas, false);
+
+	/*
+	 * Enable the submit button only if entries in both twitter handle fields
+	 */
+	function adjustSubmitButton()
+		{
+		if (getClientTwitterId().length>0 && getPartnerTwitterId().length>0)
+			document.getElementById("fetch").disabled=false;
+		else
+			document.getElementById("fetch").disabled=true;
+		}
+
 	
 	function buildGraph()
 		{
 		if (comparePageNums(2))
 			{
 			var clientProfile=Session.get("clientProfile");
-			console.log("client profile:",clientProfile);
-			if (clientProfile!=null)
+			var bpProfile=Session.get("bpProfile");
+			if (clientProfile!=null && bpProfile!=null)
 				{
 				//get the images loading
 				console.log("Loading client and BP images...");
-				bpImage.src=Session.get("bpProfile").photo;
+				bpImage.src=bpProfile.profile_image_url;
+				console.log("BP image is at ",bpImage.src);
 				bpImage.onload=drawBpPicture;
 				bpImage.onerror=badBpPicture;
 				clImage.src=clientProfile.profile_image_url;
@@ -377,11 +405,18 @@ if (Meteor.isClient) {
 		
 		//the BP's twitter ID
 		ctx.beginPath();
-		txt="@"+bpProfile.twitterId;
+		txt="@"+getPartnerTwitterId();
 		width=ctx.measureText(txt).width;
 		ctx.fillStyle=bpColor;
 		ctx.fillText(txt,c.width-x-width/2,y+r+fatLineWidth+txtHeight);
 		ctx.stroke();
+		}
+
+	function fetch(event) 
+		{
+		fetchClientTwitterProfile(event);
+		fetchBPTwitterProfile(event);
+		increasePageNumber();//slide in next page		
 		}
 	
 	function bumpPage(event, template) 
@@ -391,8 +426,6 @@ if (Meteor.isClient) {
 		if (event.target.name=="prev")
 			decreasePageNumber();//slide in previous page
 		else if (event.target.name=="next")
-			increasePageNumber();//slide in next page
-		else if (event.target.name=="fetch")
 			increasePageNumber();//slide in next page
 		return false;
 		}
@@ -431,42 +464,47 @@ if (Meteor.isClient) {
 
 	function getClientTwitterId()
 		{
-		console.log("pageIsRendered:",pageIsRendered);
 		if (pageIsRendered)
-			{
-			console.log("Client Twitter handle:",document.getElementById("clientTwitter").value);
 			return document.getElementById("clientTwitter").value;
-			}
 		else
 			return "";
 		}
 	
 	function getClientFirstName()
 		{
-		var name="";
-		var profile=Session.get("clientProfile");
-		if (profile!=null && profile.length>0)
-			{
-			name=profile.name;
-			name=name.split(" ")[0];
-			}
-		return name;
+		return getClientName().split(" ")[0];
+		}
+
+	function fetchBPTwitterProfile(event)
+		{
+		event.preventDefault(); // We'll handle it
+		event.stopPropagation();
+		var profile=Session.get("bpProfile");
+		var twitterUser=getPartnerTwitterId();
+		fetchTwitterProfile(profile,twitterUser);
+		return false;
 		}
 	
-	function getTwitterUser()
+	
+	function fetchClientTwitterProfile(event)
 		{
-		console.log("getTwitterUser()");
+		event.preventDefault(); // We'll handle it
+		event.stopPropagation();
 		var profile=Session.get("clientProfile");
-		console.log("profile is ",profile);
 		var twitterUser=getClientTwitterId();
-		
+		fetchTwitterProfile(profile,twitterUser);
+		return false;
+		}
+	
+	function fetchTwitterProfile(profile,twitterUser)
+		{
 		//see if twitter user has been changed
 		if (profile!=null && twitterUser!=profile.screen_name)
 			profile=null;
 		
 		if (twitterUser==null || twitterUser.length==0)
 			{
-			profile= "Please enter the client's Twitter handle.";			
+			profile= "Please enter the BP and client Twitter handles.";			
 			}
 		else if (profile==null)
 			{
@@ -498,7 +536,6 @@ if (Meteor.isClient) {
 			clearCanvas("p-photos");
 			buildGraph();
 			}
-//		Session.set("clientProfile",profile);
 		}
 	
 	function increasePageNumber()
@@ -561,7 +598,6 @@ if (Meteor.isClient) {
 		  },
 		
 		pageIs: comparePageNums,
-		clientProfile: getTwitterUser,
 		personality: buildGraph,
 		clientName: getClientName,
 		partnerTwitterId:getPartnerTwitterId,
@@ -575,11 +611,15 @@ if (Meteor.isClient) {
   Template.client.events({
 	    'click #lookitup': openLookup,
 	    'click #close': closeLookup,
-	    'blur #clientTwitter': getTwitterUser
+	    'keyup #clientTwitter, keyup #bpTwitter': adjustSubmitButton
 	  });
 
   Template.page.events({
-	    'click #fetch': bumpPage
+	    'click #fetch': fetch,
+	    'submit form': function(event){
+	        // Stop form submission
+	        event.preventDefault();
+	    }
   });
   
   Template.nav.events({
