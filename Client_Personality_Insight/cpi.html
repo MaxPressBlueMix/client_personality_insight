@@ -76,9 +76,14 @@
  						</tr>
  					</table>
  				<br>
- 				<p class="centre"><img src="/images/clientcircle.png" width=10 height=10> {{clientTwitterId}}&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/partnercircle.png" width=10 height=10> {{partnerTwitterId}}</p>	
+ 				<p class="centre">
+ 					<img src="/images/clientcircle.png" width=10 height=10> 
+ 					{{clientTwitterId}}&nbsp;&nbsp;&nbsp;&nbsp;
+ 					<img src="/images/partnercircle.png" width=10 height=10> 
+ 					{{partnerTwitterId}}
+ 					</p>	
  				<br><br>
- 				<button class="bigGreen">Connect with {{clientFirstName}}</button>
+ 				<button class="bigGreen" style="visibility:hidden;">Connect with {{clientFirstName}}</button>
  				</div> 
  			{{ personality }}
 	 		</div>
@@ -105,11 +110,11 @@
         <legend class="mylegend">Twitter Personality Comparison</legend>
 			<table>
 			<tr><td class="in-label">Client Twitter Handle:&nbsp;</td>
-				<td><input id="clientTwitter" autocomplete="off" class="full-width"></td>
+				<td>@<input id="clientTwitter" autocomplete="off" class="full-width"></td>
 				<td><button id="lookitup">Look It Up</button></td></tr>
 			<br>
 			<tr><td class="in-label">Your Twitter Handle:&nbsp;</td>
-			    <td colspan=2><input id="bpTwitter" autocomplete="off" class="full-width"></td></tr>
+			    <td colspan=2>@<input id="bpTwitter" autocomplete="off" class="full-width"></td></tr>
 			<br>
 			</table>
 			<br>

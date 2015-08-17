@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+body {
+	max-width: 600px;
+}
+
 .myfieldset {
 	min-width: 330px;
 	table-layout: fixed;
@@ -137,7 +141,7 @@ a {
 
 .p-table {
 	table-layout: fixed;
-	color: white;	
+	color: black;	
 }
 
 .graph {
@@ -188,6 +192,5 @@ a {
     visibility: hidden;
 }
 
-  
-  
+
   

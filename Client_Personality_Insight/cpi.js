@@ -121,7 +121,6 @@ function drawDot(canvas,value,color)
 
 function drawDecorations()
 	{
-	console.log("drawing decorations");
 	var exp="";
 	var analysis=Session.get("clientAnalysis");
 	if (analysis!=null)
@@ -143,7 +142,6 @@ function drawDecoration(canvasName,text,position)
 		var size=c.height*.7;
 		ctx.drawImage(dotDecImage,c.width*(position/100)-size/5,0,size,size);
 		c.addEventListener("mouseover",function(){c.title=text;});
-//doesn't work		c.addEventListener("hold canvas",function(){c.title=text;});
 		}
 	}
 
@@ -154,7 +152,6 @@ function badDecoration()
 
 function clearCanvas(canvasName)
 	{
-	console.log("Clearing canvas: ",canvasName);
 	var c = document.getElementById(canvasName);
 	var ctx = c.getContext("2d");
 	ctx.clearRect(0, 0, c.width, c.height);
@@ -403,7 +400,7 @@ if (Meteor.isClient) {
 		event.stopPropagation();
 		var prevDisabled=document.getElementById("prev").getAttribute("disabled")=="true";
 		var nextDisabled=document.getElementById("next").getAttribute("disabled")=="true";
-		console.log(prevDisabled+"/"+nextDisabled);
+		console.log("prev/next disabled: ",prevDisabled+"/"+nextDisabled);
 		if (event.target.name=="prev" && !prevDisabled)
 			decreasePageNumber();//slide in previous page
 		else if (event.target.name=="next" && !nextDisabled)
@@ -437,18 +434,38 @@ if (Meteor.isClient) {
 
 	function getPartnerTwitterId()
 		{
+		Session.get("bpProfile"); //this fixes a reactivity problem on page 2
+		var t="";
 		if (pageIsRendered)
-			return document.getElementById("bpTwitter").value;
-		else
-			return "";
+			{
+			t=document.getElementById("bpTwitter").value;
+			if (t.charAt(0)=='@')
+				{
+				t=t.substring(1); //don't need the @
+				document.getElementById("bpTwitter").value=t;
+				if (t.length==0)
+					document.getElementById("bpTwitter").placeholder="Don't enter the '@'";
+				}
+			}
+		return t;
 		}
 
 	function getClientTwitterId()
 		{
+		Session.get("clientProfile"); //this fixes a reactivity problem on page 2
+		var t="";
 		if (pageIsRendered)
-			return document.getElementById("clientTwitter").value;
-		else
-			return "";
+			{
+			t=document.getElementById("clientTwitter").value;
+			if (t.charAt(0)=='@')
+				{
+				t=t.substring(1); //don't need the @
+				document.getElementById("clientTwitter").value=t;
+				if (t.length==0)
+					document.getElementById("clientTwitter").placeholder="Don't enter the '@'";
+				}
+			}
+		return t;
 		}
 	
 	function getClientFirstName()
@@ -542,6 +559,10 @@ if (Meteor.isClient) {
 	    	whichPage.className += " slideLeft"; //slide it
     		}
     	document.getElementById("prev").setAttribute("disabled","false");
+    	
+    	//re-render the graph page
+//    	if (page==2)
+//    		$('#page2').html(Meteor.render(document.getElementById("p-compat")));
 		}
 	
 	function decreasePageNumber()
