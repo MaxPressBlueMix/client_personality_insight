@@ -142,6 +142,7 @@ function drawDecoration(canvasName,text,position)
 		var size=c.height*.7;
 		ctx.drawImage(dotDecImage,c.width*(position/100)-size/5,0,size,size);
 		c.addEventListener("mouseover",function(){c.title=text;});
+		c.addEventListener("touchstart",function(){c.title=text;});// https://en.wikipedia.org/wiki/DOM_events
 		}
 	}
 
