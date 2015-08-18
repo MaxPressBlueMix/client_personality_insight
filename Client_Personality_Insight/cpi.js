@@ -141,9 +141,10 @@ function drawDecoration(canvasName,text,position)
 		var ctx = c.getContext("2d");
 		var size=c.height*.7;
 		ctx.drawImage(dotDecImage,c.width*(position/100)-size/5,0,size,size);
-		c.title=text;
+//		c.title=text;
 //		c.addEventListener("mouseover",function(){c.title=text;});
-		c.innerHTML='<span>'+text+'</span>';
+		c.className+=" showTip "+canvasName;
+		dw_Tooltip.content_vars[canvasName]=text;
 //		c.addEventListener("touchstart",function(){c.title=text;});// https://en.wikipedia.org/wiki/DOM_events
 		}
 	}
@@ -167,6 +168,12 @@ if (Meteor.isClient) {
 	var pageIsRendered=false;
 	var fetched=false;
 
+	dw_Tooltip.content_vars = {
+		    link1: 'Tooltip content for link 1',
+		    link2: '<div class="img"><img src="images/jim.jpg" /></div>'
+		}
+	 
+	
 	Session.set("clientProfile",null);
 	Session.set("bpProfile",null);
 	
@@ -190,7 +197,7 @@ if (Meteor.isClient) {
 										 "sensitiveconfident":22,
 										 "caringanalytical":50},
 								"explain":{"cautiouscurious":"Self Focused - Your client is more concerned with taking care of themselves than taking time for others. Look for sales angles that will help your client shine in front of their management. Contrary - Your client does not shy away from contradicting others.	Avoid direct challenges to the client's statements and have a thick skin. Proud - Your client holds themselves in high regard and are satisfied with who they are.	Encourage your client to be a spokesmen within the company championing the solution",
-									 "organizedeasygoing":"Driven - Your client sets high goals for themselves and works hard to achieve them.	Make is clear to your client that the solution your are proposing is part of an broad strategy to acheive sweeping business advantage. Deliberate - Your client carefully thinks through decisions before making them.	Make sure you build a detailed case for your solution from start to finish. Cover all the bases in detail and then ask for the order. Duitiful - Your client take rules and obligations seriously, even when they are inconvenient.	Explore the client's constraints early in the process and start by proposing a solution that is well within their power to control.",
+									 "organizedeasygoing":"Driven - Your client sets high goals for themselves and works hard to achieve them.	Make is clear to your client that the solution your are proposing is part of a broad strategy to acheive sweeping business advantage. Deliberate - Your client carefully thinks through decisions before making them.	Make sure you build a detailed case for your solution from start to finish. Cover all the bases in detail and then ask for the order. Dutiiful - Your client take rules and obligations seriously, even when they are inconvenient.	Explore the client's constraints early in the process and start by proposing a solution that is well within their power to control.",
 									 "outgoingreserved":"",
 									 "sensitiveconfident":"Consistent - Your client enjoys familiar routines and prefers not to deviate from them. Consider setting up a regular meeting with this client... and don't be late. Dispassionate - You do not frequently think about or openly express your emotions. Down-to-earth - Your client prefers facts over fantasy. Make sure your claims and assertions are backed up by demonstrable facts.",
 										 "caringanalytical":""}});
