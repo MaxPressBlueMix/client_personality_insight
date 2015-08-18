@@ -1,38 +1,67 @@
 @CHARSET "UTF-8";
 
+* {
+	box-sizing: border-box;
+}
+
+h2 {
+	color: #00b2ef;
+	font-size: 27px;
+}
+
+.col-xs-10 {
+    width: 83.3333%;
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px
+}
+
+.col-xs-2 {
+    width: 16.6667%;
+    padding-left: 15px;
+    padding-right: 15px;
+    float: left;    
+}
+
+.col-lg-12 {
+	padding-left: 15px;
+}
+
 body {
-	max-width: 600px;
+	max-width: 700px;
+	color: #333333;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .myfieldset {
 	min-width: 330px;
 	table-layout: fixed;
-	border-width:1;
-	border-style:ridge;
-	border-color:blue;
-	border-radius: 1px;
-	border-bottom: 1px solid #00b2ef;
+	border-width:0;
+    max-width: 100%;
+    border-bottom: 1px solid #00b2ef;
 	}
 
 .mylegend {
 	border:none;
 	text-align: left;
 	color: #00b2ef;
-	}
+	font-size: 19.5px;
+    margin-bottom: 18px;
+    }
 
 .full-width {
 	width: 95%;
 }
 
 input {
-	max-width:100%;
 	font-size: 125%;
 	autocorrect: off;
 }
 
 .in-label {	
 	text-align: right;
-	width: 25%;
 }
 
 .canvas {
@@ -53,6 +82,35 @@ img {
 a {
 	data-transition: slide;
 }
+
+.row {
+	clear: both;
+	margin-left: 15px;
+    margin-right: 15px;
+}
+
+.row::after {
+    content: " ";
+    display: table;
+    clear: both;
+}
+
+.row .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.header {
+	background: #f2fafc none repeat scroll 0 0;
+    border-bottom: 1px solid #00b2ef;
+    margin: 0 0 30px;
+    padding-top: 10px;
+    display: table;	
+ 	content: " ";
+    
+}
+
+
 
 .navtable {
 	position: fixed;
@@ -126,7 +184,7 @@ a {
 	background-color: #F2FAFC;
 	position: relative;
     visibility: inherit;
-    max-width: 600px; 
+    max-width: 700px; 
     border-bottom: 1px solid #00b2ef;   
 /*	border: solid 2px red; */
 }
@@ -176,7 +234,7 @@ a {
     left: 0;
     height: 100%;
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
     z-index: 1;
     background-color: white;
     visibility: hidden;
@@ -192,5 +250,7 @@ a {
     visibility: hidden;
 }
 
-
+span:hover:after { 
+	content: attr(title); 
+	}
   
