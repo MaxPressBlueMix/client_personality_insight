@@ -140,13 +140,42 @@ function drawDecoration(canvasName,text,position)
 		var c = document.getElementById(canvasName);
 		var ctx = c.getContext("2d");
 		var size=c.height*.7;
-		ctx.drawImage(dotDecImage,c.width*(position/100)-size/5,0,size,size);
-//		c.title=text;
-//		c.addEventListener("mouseover",function(){c.title=text;});
+		var xLoc=c.width*(position/100);
+		var absX=xLoc;//+getAbsoluteCoord(canvasName).X;
+		ctx.drawImage(dotDecImage,xLoc-size/5,0,size,size);
 		c.className+=" showTip "+canvasName;
-		dw_Tooltip.content_vars[canvasName]=text;
-//		c.addEventListener("touchstart",function(){c.title=text;});// https://en.wikipedia.org/wiki/DOM_events
+		
+		dw_Tooltip.content_vars[canvasName]={'location':absX,'width':size,'content':text};
 		}
+	}
+
+function getAbsoluteCoord(id)
+	{
+	var e = document.getElementById(id);
+	var offset = {x:0,y:0};
+	while (e)
+		{
+	    offset.x += e.offsetLeft;
+	    offset.y += e.offsetTop;
+	    e = e.offsetParent;
+		}
+
+	if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft))
+		{
+	    offset.x -= document.documentElement.scrollLeft;
+	    offset.y -= document.documentElement.scrollTop;
+		}
+	else if (document.body && (document.body.scrollTop || document.body.scrollLeft))
+		{
+	    offset.x -= document.body.scrollLeft;
+	    offset.y -= document.body.scrollTop;
+		}
+	else if (window.pageXOffset || window.pageYOffset)
+		{
+	    offset.x -= window.pageXOffset;
+	    offset.y -= window.pageYOffset;
+		}
+	return{"X":offset.x, "Y":offset.y};
 	}
 
 function badDecoration()
@@ -168,10 +197,14 @@ if (Meteor.isClient) {
 	var pageIsRendered=false;
 	var fetched=false;
 
-	dw_Tooltip.content_vars = {
-		    link1: 'Tooltip content for link 1',
-		    link2: '<div class="img"><img src="images/jim.jpg" /></div>'
+	dw_Tooltip.defaultProps = {
+		    hoverable: true, // tooltip lingers so user can hover to click links
+		    supportTouch: true //, // enables support for touch devices 
+//		    klass: 'tooltip', // class to be used for tooltips
+//		    wrapFn: dw_Tooltip.wrapToWidth // formatting function for tooltip content
 		}
+	
+	dw_Tooltip.content_vars = {};
 	 
 	
 	Session.set("clientProfile",null);
