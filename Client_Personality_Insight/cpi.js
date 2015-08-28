@@ -1,194 +1,137 @@
 
-var bpColor="#09afeb";
-var clientColor="#8dc53e";
-var photoBackgroundColor="#F2FAFC";
+var traits={
+//	"agreeableness":{
+		"altruism":{
+			"low":"You are more concerned with taking care of yourself than taking time for others.",
+			"high":"You feel fulfilled when helping others and will go out of your way to do so."
+			},
+		"cooperation":{
+			"low":"You do not shy away from contradicting others.",
+			"high":"You are easy to please and try to avoid confrontation."
+			},
+		"modesty":{
+			"low":"You hold yourself in high regard and are satisfied with who you are.",
+			"high":"You are uncomfortable being the center of attention."
+			},
+		"morality":{
+			"low":"You are comfortable using every trick in the book to get what you want.",
+			"high":"You think it is wrong to take advantage of others to get ahead."
+			},
+		"sympathy":{
+			"low":"You think people should generally rely more on themselves than on others.",
+			"high":"You feel what others feel and are compassionate toward them."
+			},
+		"trust":{
+			"low":"You are wary of other people's intentions and do not trust easily.",
+			"high":"You believe the best in others and trust people easily."
+			},
+//		},
+//	"conscientiousness":{	
+		"achievement-striving":{
+			"low":"You are content with your level of accomplishment and do not feel the need to set ambitious goals.",
+			"high":"You set high goals for yourself and work hard to achieve them."
+			},
+		"cautiousness":{
+			"low":"You would rather take action immediately than spend time deliberating making a decision.",
+			"high":"You carefully think through decisions before making them."
+			},
+		"dutifulness":{
+			"low":"You do what you want, disregarding rules and obligations.",
+			"high":"You take rules and obligations seriously, even when they are inconvenient."
+			},
+		"orderliness":{
+			"low":"You do not make a lot of time for organization in your daily life.",
+			"high":"You feel a strong need for structure in your life."
+			},
+		"self-discipline":{
+			"low":"You have a hard time sticking with difficult tasks for a long period of time.",
+			"high":"You can tackle and stick with tough tasks."
+			},
+		"self-efficacy":{
+			"low":"You frequently doubt your ability to achieve your goals.",
+			"high":"You feel you have the ability to succeed in the tasks you set out to do."
+			},
+//		},
+//	"extraversion":{
+		"activity level":{
+			"low":"You appreciate a relaxed pace in life.",
+			"high":"You enjoy a fast-paced, busy schedule with many activities."
+			},
+		"assertiveness":{
+			"low":"You prefer to listen than to talk, especially in group situations.",
+			"high":"You tend to speak up and take charge of situations, and you are comfortable leading groups."
+			},
+		"cheerfulness":{
+			"low":"You are generally serious and do not joke much.",
+			"high":"You are a joyful person and share that joy with the world."
+			},
+		"excitement-seeking":{
+			"low":"You prefer activities that are quiet, calm, and safe.",
+			"high":"You are excited by taking risks and feel bored without lots of action going on."
+			},
+		"friendliness":{
+			"low":"You are a private person and do not let many people in.",
+			"high":"You make friends easily and feel comfortable around other people."
+			},
+		"gregariousness":{
+			"low":"You have a strong desire to have time to yourself.",
+			"high":"You enjoy being in the company of others."
+			},
+//		},
+//	"neuroticism":{
+		"anger":{
+			"low":"It takes a lot to get you angry.",
+			"high":"You have a fiery temper, especially when things do not go your way."
+			},
+		"anxiety":{
+			"low":"You tend to feel calm and self-assured.",
+			"high":"You tend to worry about things that might happen."
+			},
+		"depression":{
+			"low":"You are generally comfortable with yourself as you are.",
+			"high":"You think quite often about the things you are unhappy about."
+			},
+		"immoderation":{
+			"low":"You have control over your desires, which are not particularly intense.",
+			"high":"You feel your desires strongly and are easily tempted by them."
+			},
+		"self-consciousness":{
+			"low":"You are hard to embarrass and are self-confident most of the time.",
+			"high":"You are sensitive about what others might be thinking of you."
+			},
+		"vulnerability":{
+			"low":"You handle unexpected events calmly and effectively.",
+			"high":"You are easily overwhelmed in stressful situations."
+			},
+//		},
+//	"openness":{
+		"adventurousness":{
+			"low":"You enjoy familiar routines and prefer not to deviate from them.",
+			"high":"You are eager to experience new things."
+			},
+		"artistic interests":{
+			"low":"You are less concerned with artistic or creative activities than most people.",
+			"high":"You enjoy beauty and seek out creative experiences."
+			},
+		"emotionality":{
+			"low":"You do not frequently think about or openly express your emotions.",
+			"high":"You are aware of your feelings and how to express them."
+			},
+		"imagination":{
+			"low":"You prefer facts over fantasy.",
+			"high":"You have a wild imagination."
+			},
+		"intellect":{
+			"low":"You prefer dealing with the world as it is, rarely considering abstract ideas.",
+			"high":"You are open to and intrigued by new ideas and love to explore them."
+			},
+		"liberalism":{
+			"low":"You prefer following with tradition to maintain a sense of stability.",
+			"high":"You prefer to challenge authority and traditional values to effect change."
+			}
+//		}
+	};
 
-var userSession = new Meteor.Collection("user_sessions");
-		
-function getClientName()
-	{
-	var name="";
-	var profile=Session.get("clientProfile");
-	if (profile!=null)
-		name=profile.name;
-	return name;
-	}
-
-function resizeCanvas() {
-	document.getElementById("prev").setAttribute("disabled", "true");
-	document.getElementById("next").setAttribute("disabled", "true");
-	var c = document.getElementById("p-photos");
-	c.width = window.innerWidth;//*.986;
-	c.height = window.innerHeight/4;  //25%
-	buildGraph();
-	pageIsRendered=true;
-	}
-
-function drawOval(context,x,y,radius,color,lineWidth)
-	{
-	var ovalRatio=0.85;
-	context.save();
-	context.scale(ovalRatio,1); //make it an oval
-	context.beginPath();
-	context.arc(x/ovalRatio,y,radius,0,2*Math.PI);
-	context.restore();
-	context.strokeStyle=color;
-	context.lineWidth = lineWidth;
-	context.stroke();	
-	}
-
-function drawClientPicture()
-	{
-	var c = document.getElementById("p-photos");
-	var ctx = c.getContext("2d");
-
-	var fatLineWidth=c.height*0.1;	
-	var x=c.width/6.7;
-	var y=c.height*.44;
-	var r=(c.height*.66)/2;
-	var w=r*2-fatLineWidth;
-	var h=w;
-	ctx.drawImage(clImage,x-w/2,y-h/2,w,h);
-	drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
-	}
-
-function badClientPicture()
-	{
-	
-	}
-
-function drawBpPicture()
-	{
-	var c = document.getElementById("p-photos");
-	var ctx = c.getContext("2d");
-
-	var fatLineWidth=c.height*0.1;	
-	var x=c.width-c.width/6.7;
-	var y=c.height*.44;
-	var r=(c.height*.66)/2;
-	var w=r*2-fatLineWidth;
-	var h=w;
-	ctx.drawImage(bpImage,x-w/2,y-h/2,w,h);
-	drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
-	}
-
-function badBpPicture()
-	{
-	
-	}
-
-function drawBpDots()
-	{
-	var analysis=Session.get("bpAnalysis");
-	if (analysis!=null)
-		{
-		drawDot("cautiouscurious",analysis.score.cautiouscurious,bpColor);
-		drawDot("organizedeasygoing",analysis.score.organizedeasygoing,bpColor);
-		drawDot("outgoingreserved",analysis.score.outgoingreserved,bpColor);
-		drawDot("sensitiveconfident",analysis.score.sensitiveconfident,bpColor);
-		drawDot("caringanalytical",analysis.score.caringanalytical,bpColor);
-		}
-	}
-
-function drawClDots()
-	{
-	var analysis=Session.get("clientAnalysis");
-	if (analysis!=null)
-		{
-		drawDot("cautiouscurious",analysis.score.cautiouscurious,clientColor);
-		drawDot("organizedeasygoing",analysis.score.organizedeasygoing,clientColor);
-		drawDot("outgoingreserved",analysis.score.outgoingreserved,clientColor);
-		drawDot("sensitiveconfident",analysis.score.sensitiveconfident,clientColor);
-		drawDot("caringanalytical",analysis.score.caringanalytical,clientColor);
-		}
-	}
-
-function drawDot(canvas,value,color)
-	{
-	var c = document.getElementById(canvas);
-	var ctx = c.getContext("2d");
-	var size=c.height*.7;
-	var y=(c.height-size)/2;
-//	ctx.drawImage(image,c.width*(value/100),y,size,size);
-	y=c.height/2;
-	ctx.strokeStyle=color;
-	ctx.fillStyle=color;
-	ctx.beginPath();
-	ctx.arc(c.width*(value/100),y,size/2,0,2*Math.PI);
-	ctx.fill();
-	ctx.stroke();
-	}
-
-function drawDecorations()
-	{
-	var exp="";
-	var analysis=Session.get("clientAnalysis");
-	if (analysis!=null)
-		{
-		drawDecoration("cautiouscurious",analysis.explain.cautiouscurious,analysis.score.cautiouscurious);
-		drawDecoration("organizedeasygoing",analysis.explain.organizedeasygoing,analysis.score.organizedeasygoing);
-		drawDecoration("outgoingreserved",analysis.explain.outgoingreserved,analysis.score.outgoingreserved);
-		drawDecoration("sensitiveconfident",analysis.explain.sensitiveconfident,analysis.score.sensitiveconfident);
-		drawDecoration("caringanalytical",analysis.explain.caringanalytical,analysis.score.caringanalytical);
-		}
-	}
-
-function drawDecoration(canvasName,text,position)
-	{
-	if (text.length>0)
-		{
-		var c = document.getElementById(canvasName);
-		var ctx = c.getContext("2d");
-		var size=c.height*.7;
-		var xLoc=c.width*(position/100);
-		var absX=xLoc;//+getAbsoluteCoord(canvasName).X;
-		ctx.drawImage(dotDecImage,xLoc-size/5,0,size,size);
-		c.className+=" showTip "+canvasName;
-		
-		dw_Tooltip.content_vars[canvasName]={'location':absX,'width':size,'content':text};
-		}
-	}
-
-function getAbsoluteCoord(id)
-	{
-	var e = document.getElementById(id);
-	var offset = {x:0,y:0};
-	while (e)
-		{
-	    offset.x += e.offsetLeft;
-	    offset.y += e.offsetTop;
-	    e = e.offsetParent;
-		}
-
-	if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft))
-		{
-	    offset.x -= document.documentElement.scrollLeft;
-	    offset.y -= document.documentElement.scrollTop;
-		}
-	else if (document.body && (document.body.scrollTop || document.body.scrollLeft))
-		{
-	    offset.x -= document.body.scrollLeft;
-	    offset.y -= document.body.scrollTop;
-		}
-	else if (window.pageXOffset || window.pageYOffset)
-		{
-	    offset.x -= window.pageXOffset;
-	    offset.y -= window.pageYOffset;
-		}
-	return{"X":offset.x, "Y":offset.y};
-	}
-
-function badDecoration()
-	{
-	console.log("Unable to load dot decoration.");
-	}
-
-function clearCanvas(canvasName)
-	{
-	var c = document.getElementById(canvasName);
-	var ctx = c.getContext("2d");
-	ctx.clearRect(0, 0, c.width, c.height);
-	}
 
 if (Meteor.isClient) {
 	var bpImage=new Image(200,200);
@@ -196,6 +139,9 @@ if (Meteor.isClient) {
 	var dotDecImage=new Image(40,40);
 	var pageIsRendered=false;
 	var fetched=false;
+	var bpColor="#09afeb";
+	var clientColor="#8dc53e";
+	var photoBackgroundColor="#F2FAFC";
 
 	dw_Tooltip.defaultProps = {
 		    hoverable: true, // tooltip lingers so user can hover to click links
@@ -212,35 +158,218 @@ if (Meteor.isClient) {
 	
 	Session.set("score",67);
 
-	Session.set("bpAnalysis",{"score":{"cautiouscurious":10,
-				 "organizedeasygoing":20,
-				 "outgoingreserved":30,
-				 "sensitiveconfident":60,
-				 "caringanalytical":87},
-				 "caringanalytical":"",			
-			"explain":{"cautiouscurious":"",
-					 "organizedeasygoing":"",
-					 "outgoingreserved":"",
-					 "sensitiveconfident":"",
-			}});
-	
-	Session.set("clientAnalysis",{"score":{"cautiouscurious":40,
-										 "organizedeasygoing":30,
-										 "outgoingreserved":35,
-										 "sensitiveconfident":22,
-										 "caringanalytical":50},
-								"explain":{"cautiouscurious":"<b>Self Focused</b> - Your client is more concerned with taking care of themselves than taking time for others. Look for sales angles that will help your client shine in front of their management. <b>Contrary</b> - Your client does not shy away from contradicting others.	Avoid direct challenges to the client's statements and have a thick skin. <b>Proud</b> - Your client holds themselves in high regard and are satisfied with who they are.	Encourage your client to be a spokesmen within the company championing the solution",
-									 "organizedeasygoing":"<b>Driven</b> - Your client sets high goals for themselves and works hard to achieve them.	Make is clear to your client that the solution your are proposing is part of a broad strategy to acheive sweeping business advantage. <b>Deliberate</b> - Your client carefully thinks through decisions before making them.	Make sure you build a detailed case for your solution from start to finish. Cover all the bases in detail and then ask for the order. <b>Dutiful</b> - Your client take rules and obligations seriously, even when they are inconvenient.	Explore the client's constraints early in the process and start by proposing a solution that is well within their power to control.",
-									 "outgoingreserved":"",
-									 "sensitiveconfident":"<b>Consistent</b> - Your client enjoys familiar routines and prefers not to deviate from them. Consider setting up a regular meeting with this client... and don't be late. <b>Dispassionate</b> - You do not frequently think about or openly express your emotions. <b>Down-to-earth</b> - Your client prefers facts over fantasy. Make sure your claims and assertions are backed up by demonstrable facts.",
-										 "caringanalytical":""}});
-	
 	Session.set('pageNumber',1);
+	
+	function getClientName()
+		{
+		var name="";
+		var profile=Session.get("clientProfile");
+		if (profile!=null)
+			name=profile.name;
+		return name;
+		}
+	
+	function resizeCanvas() {
+		document.getElementById("prev").setAttribute("disabled", "true");
+		document.getElementById("next").setAttribute("disabled", "true");
+		var c = document.getElementById("p-photos");
+		c.width = window.innerWidth;//*.986;
+		c.height = window.innerHeight/4;  //25%
+		buildGraph();
+		pageIsRendered=true;
+		}
+
 	window.addEventListener('resize', resizeCanvas, false);
 	
+	function drawOval(context,x,y,radius,color,lineWidth)
+		{
+		var ovalRatio=0.85;
+		context.save();
+		context.scale(ovalRatio,1); //make it an oval
+		context.beginPath();
+		context.arc(x/ovalRatio,y,radius,0,2*Math.PI);
+		context.restore();
+		context.strokeStyle=color;
+		context.lineWidth = lineWidth;
+		context.stroke();	
+		}
+	
+	function drawClientPicture()
+		{
+		var c = document.getElementById("p-photos");
+		var ctx = c.getContext("2d");
+	
+		var fatLineWidth=c.height*0.1;	
+		var x=c.width/6.7;
+		var y=c.height*.44;
+		var r=(c.height*.66)/2;
+		var w=r*2-fatLineWidth;
+		var h=w;
+		ctx.drawImage(clImage,x-w/2,y-h/2,w,h);
+		drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+		}
+	
+	function badClientPicture()
+		{
+		
+		}
+	
+	function drawBpPicture()
+		{
+		var c = document.getElementById("p-photos");
+		var ctx = c.getContext("2d");
+	
+		var fatLineWidth=c.height*0.1;	
+		var x=c.width-c.width/6.7;
+		var y=c.height*.44;
+		var r=(c.height*.66)/2;
+		var w=r*2-fatLineWidth;
+		var h=w;
+		ctx.drawImage(bpImage,x-w/2,y-h/2,w,h);
+		drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+		}
+	
+	function badBpPicture()
+		{
+		
+		}
+	
+	function drawBpDots()
+		{
+		var analysis=Session.get("bpAnalysis");
+		if (analysis!=null)
+			{
+			console.log("****************");
+			console.log(analysis);
+			console.log("****************");
+			drawDot("agreeableness",analysis.agreeableness.score,bpColor);
+			drawDot("conscientiousness",analysis.conscientiousness.score,bpColor);
+			drawDot("extraversion",analysis.extraversion.score,bpColor);
+			drawDot("neuroticism",analysis.neuroticism.score,bpColor);
+			drawDot("openness",analysis.openness.score,bpColor);
+			}
+		}
+	
+	function drawClDots()
+		{
+		var analysis=Session.get("clientAnalysis");
+		if (analysis!=null)
+			{
+			drawDot("agreeableness",analysis.agreeableness.score,clientColor);
+			drawDot("conscientiousness",analysis.conscientiousness.score,clientColor);
+			drawDot("extraversion",analysis.extraversion.score,clientColor);
+			drawDot("neuroticism",analysis.neuroticism.score,clientColor);
+			drawDot("openness",analysis.openness.score,clientColor);
+			}
+		}
+	
+	function drawDot(canvas,value,color)
+		{
+		var c = document.getElementById(canvas);
+		var ctx = c.getContext("2d");
+		var size=c.height*.7;
+		var y=(c.height-size)/2;
+		y=c.height/2;
+		ctx.strokeStyle=color;
+		ctx.fillStyle=color;
+		ctx.beginPath();
+		ctx.arc(c.width*value,y,size/2,0,2*Math.PI);
+		ctx.fill();
+		ctx.stroke();
+		}
+	
+	function drawDecorations()
+		{
+		var exp="";
+		var analysis=Session.get("clientAnalysis");
+		if (analysis!=null)
+			{
+			drawDecoration("agreeableness",analysis.agreeableness.facets,analysis.agreeableness.score);
+			drawDecoration("conscientiousness",analysis.conscientiousness.facets,analysis.conscientiousness.score);
+			drawDecoration("extraversion",analysis.extraversion.facets,analysis.extraversion.score);
+			drawDecoration("neuroticism",analysis.neuroticism.facets,analysis.neuroticism.score);
+			drawDecoration("openness",analysis.openness.facets,analysis.openness.score);
+			}
+		}
+	
+	function drawDecoration(canvasName,levels,position)
+		{
+		if (levels)
+			{
+			var c = document.getElementById(canvasName);
+			var ctx = c.getContext("2d");
+			var size=c.height*.7;
+			var xLoc=c.width*position;
+			var absX=xLoc;//+getAbsoluteCoord(canvasName).X;
+			ctx.drawImage(dotDecImage,xLoc-size/5,0,size,size);
+			
+			c.className+=" showTip "+canvasName;
+			var text=buildPersonalityText(levels); //get the tooltip text
+			dw_Tooltip.content_vars[canvasName]={'location':absX,'width':size,'content':text};
+			}
+		}
+	
+	function buildPersonalityText(facetList)
+		{
+		var text="";
+		for (var facet in facetList)
+			{
+			if (facetList[facet]>0)//has a score?
+				{
+				var score=facetList[facet]<0.5?"low":"high";
+				if (traits[facet])
+					text+=traits[facet][score];
+				}
+			}
+		return text;
+		}
+	
+	function getAbsoluteCoord(id)
+		{
+		var e = document.getElementById(id);
+		var offset = {x:0,y:0};
+		while (e)
+			{
+		    offset.x += e.offsetLeft;
+		    offset.y += e.offsetTop;
+		    e = e.offsetParent;
+			}
+	
+		if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft))
+			{
+		    offset.x -= document.documentElement.scrollLeft;
+		    offset.y -= document.documentElement.scrollTop;
+			}
+		else if (document.body && (document.body.scrollTop || document.body.scrollLeft))
+			{
+		    offset.x -= document.body.scrollLeft;
+		    offset.y -= document.body.scrollTop;
+			}
+		else if (window.pageXOffset || window.pageYOffset)
+			{
+		    offset.x -= window.pageXOffset;
+		    offset.y -= window.pageYOffset;
+			}
+		return{"X":offset.x, "Y":offset.y};
+		}
+	
+	function badDecoration()
+		{
+		console.log("Unable to load dot decoration.");
+		}
+	
+	function clearCanvas(canvasName)
+		{
+		var c = document.getElementById(canvasName);
+		var ctx = c.getContext("2d");
+		ctx.clearRect(0, 0, c.width, c.height);
+		}
+
 	function somebodyTyped()
 		{
 		fetched=false;
+		Session.set("clientAnalysis",null);
+		Session.set("bpAnalysis",null);
 		adjustSubmitButton();
 		}
 
@@ -288,6 +417,8 @@ if (Meteor.isClient) {
 				drawBpDots();
 				drawClDots();
 				}
+			else if (!fetched)
+				fetch();
 			}
 		}
 	
@@ -296,11 +427,11 @@ if (Meteor.isClient) {
 	 */
 	function drawSliders(bpProfile,clientProfile)
 		{
-		drawSlider("cautiouscurious");
-		drawSlider("organizedeasygoing");
-		drawSlider("outgoingreserved");
-		drawSlider("sensitiveconfident");
-		drawSlider("caringanalytical");
+		drawSlider("agreeableness");
+		drawSlider("conscientiousness");
+		drawSlider("extraversion");
+		drawSlider("neuroticism");
+		drawSlider("openness");
 		}
 	
 	/*
@@ -425,17 +556,24 @@ if (Meteor.isClient) {
 		ctx.stroke();
 		}
 
-	function fetch(event) 
+	function fetchAll(event)
 		{
 		if (event)
 			{
 			event.preventDefault(); // We'll handle it
 			event.stopPropagation();
 			}
+		fetch();
+		increasePageNumber();//slide in next page		
+		}
+	
+	function fetch() 
+		{
+		fetched=true;
 		fetchClientTwitterProfile();
 		fetchBPTwitterProfile();
-		fetched=true;
-		increasePageNumber();//slide in next page		
+		fetchClientTweets();
+		fetchBPTweets();
 		}
 	
 	function bumpPage(event, template) 
@@ -566,13 +704,66 @@ if (Meteor.isClient) {
 		else
 			{
 			console.log(result);
-			console.log("screen names:",result.screen_name,getClientTwitterId());
 			if (result.screen_name==getClientTwitterId())
 				Session.set("clientProfile",result);
 			else
 				Session.set("bpProfile",result);
 			clearCanvas("p-photos");
 			buildGraph();
+			}
+		}
+	
+	function fetchClientTweets()
+		{
+		var twitterUser=getClientTwitterId();
+		fetchTweets(twitterUser);
+		}
+	
+	function fetchBPTweets() 
+		{
+		var twitterUser=getPartnerTwitterId();
+		fetchTweets(twitterUser);
+		}
+	
+	function fetchTweets(twitterUser)
+		{
+		var tweets=null;
+		if (twitterUser==null || twitterUser.length==0)
+			{
+			tweets= "Twitter handle ("+twitterUser+") is invalid.";
+			console.log(tweets);
+			}
+		else 
+			{
+			console.log("Fetching tweets for "+twitterUser);
+			Meteor.call('getTweets', twitterUser, buildTweets);
+			}
+		return tweets;
+		}
+	
+	/*
+	 * Callback function for server "getTweets"
+	 */
+	function buildTweets(error, result)
+		{
+		var profile=null;
+		if (error)
+			{
+			console.log("Error fetching tweets! ",error);
+			}
+		else
+			{
+			console.log(result);
+			if (result[getClientTwitterId()]!=null)
+				{
+				console.log("Storing tweets for client",result);				
+				Session.set("clientAnalysis",result[getClientTwitterId()]);
+				}
+			else
+				{
+				console.log("Storing tweets for partner",result);				
+				Session.set("bpAnalysis",result[getPartnerTwitterId()]);
+				}
 			}
 		}
 	
@@ -665,7 +856,7 @@ if (Meteor.isClient) {
 	  });
 
   Template.page.events({
-	    'click #fetch': fetch,
+	    'click #fetch': fetchAll,
 	    'submit form': function(event){
 	        // Stop form submission
 	        event.preventDefault();
