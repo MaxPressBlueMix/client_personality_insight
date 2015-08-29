@@ -270,10 +270,15 @@ if (Meteor.isClient) {
 		var size=c.height*.7;
 		var y=(c.height-size)/2;
 		y=c.height/2;
+		var x=c.width*value;
+//		if (x<size/2) //bumping the left edge
+//			x=size/2;
+//		else if (x>(width-(size/2))) //bumping the right edge
+//			x=width-(size/2);
 		ctx.strokeStyle=color;
 		ctx.fillStyle=color;
 		ctx.beginPath();
-		ctx.arc(c.width*value,y,size/2,0,2*Math.PI);
+		ctx.arc(x,y,size/2,0,2*Math.PI);
 		ctx.fill();
 		ctx.stroke();
 		}
@@ -509,24 +514,7 @@ if (Meteor.isClient) {
 		ctx.strokeStyle=thinLineColor;
 		ctx.stroke();
 		
-		//the box with the percentage
-		ctx.beginPath();
-		ctx.font = "5.0vh Arial";
-		var txt=Session.get("score")+"%";
-		var width=ctx.measureText(txt).width;
-		var pctBoxHeight=c.height/4;
-		var x1=(c.width/2)-(width/2);
-		var y1=y-pctBoxHeight/2;
-		var pad=width*.08;
-		ctx.strokeStyle="black";
-		ctx.lineWidth=1;
-		ctx.fillStyle="#000000";
-		ctx.fillRect(x1-pad,y1,width+(pad*2),pctBoxHeight);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.fillStyle="#F7C611";
-		ctx.fillText(txt,x1,y1+pctBoxHeight*.75);
-		ctx.stroke();
+		drawSimilarityBox();//the box with the percentage
 		
 		//the descriptive text
 		ctx.beginPath();
@@ -556,6 +544,70 @@ if (Meteor.isClient) {
 		ctx.stroke();
 		}
 
+	function drawSimilarityBox() //the box with the percentage
+		{
+		var client=Session.get("clientAnalysis");
+		var partner=Session.get("bpAnalysis");
+		
+		if (client && partner)
+			{
+			var c = document.getElementById("p-photos");
+			var ctx = c.getContext("2d");				
+			ctx.beginPath();
+			ctx.font = "5.0vh Arial";
+			var txt=calculateSimilarity()+"%";
+			var width=ctx.measureText(txt).width;
+			var pctBoxHeight=c.height/4;
+			var x1=(c.width/2)-(width/2);
+			var y=c.height*.44;
+			var y1=y-pctBoxHeight/2;
+			var pad=width*.08;
+			ctx.strokeStyle="black";
+			ctx.lineWidth=1;
+			ctx.fillStyle="#000000";
+			ctx.fillRect(x1-pad,y1,width+(pad*2),pctBoxHeight);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillStyle="#F7C611";
+			ctx.fillText(txt,x1,y1+pctBoxHeight*.75);
+			ctx.stroke();
+			}
+		else
+			console.log("Analysis not yet complete");
+		}
+	
+	function calculateSimilarity()
+		{
+		var client=Session.get("clientAnalysis");
+		var partner=Session.get("bpAnalysis");
+		
+		if (client && partner)
+			{
+			var c=client.openness.score;
+			var p=partner.openness.score;
+			var diff=Math.min(c,p)/Math.max(c,p);
+
+			c=client.conscientiousness.score;
+			p=partner.conscientiousness.score;
+			diff+=Math.min(c,p)/Math.max(c,p);
+	
+			c=client.extraversion.score;
+			p=partner.extraversion.score;
+			diff+=Math.min(c,p)/Math.max(c,p);
+	
+			c=client.agreeableness.score;
+			p=partner.agreeableness.score;
+			diff+=Math.min(c,p)/Math.max(c,p);
+	
+			c=client.neuroticism.score;
+			p=partner.neuroticism.score;
+			diff+=Math.min(c,p)/Math.max(c,p);
+			
+			diff=Math.round((diff/5)*100);
+			return diff;
+			}
+		}
+	
 	function fetchAll(event)
 		{
 		if (event)
