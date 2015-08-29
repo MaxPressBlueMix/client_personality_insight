@@ -61,11 +61,11 @@ Meteor.methods({
 		var enough=false;
 		var wordCount=0;
 		var tweetCount=0;
+		var allTweets=new Analysis();
+		var results=new Object();
 		while(!enough)
 			{
 			var data=twitGetSync("statuses/user_timeline",twitOptions);
-			var results=new Object();
-			var allTweets=new Analysis();
 			if (data.length<5) //ran out of tweets
 				enough=true;
 			for (var i=0;i<data.length;i++)

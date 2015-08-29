@@ -271,10 +271,10 @@ if (Meteor.isClient) {
 		var y=(c.height-size)/2;
 		y=c.height/2;
 		var x=c.width*value;
-//		if (x<size/2) //bumping the left edge
-//			x=size/2;
-//		else if (x>(width-(size/2))) //bumping the right edge
-//			x=width-(size/2);
+		if (x<c.width/20) //bumping the left edge
+			x=c.width/20;
+		else if (x>(c.width-(c.width/20))) //bumping the right edge
+			x=c.width-(c.width/20);
 		ctx.strokeStyle=color;
 		ctx.fillStyle=color;
 		ctx.beginPath();
@@ -305,12 +305,15 @@ if (Meteor.isClient) {
 			var ctx = c.getContext("2d");
 			var size=c.height*.7;
 			var xLoc=c.width*position;
-			var absX=xLoc;//+getAbsoluteCoord(canvasName).X;
+			if (xLoc<c.width/20) //bumping the left edge
+				xLoc=c.width/20;
+			else if (xLoc>(c.width-(c.width/20))) //bumping the right edge
+				xLoc=c.width-(c.width/20);
 			ctx.drawImage(dotDecImage,xLoc-size/5,0,size,size);
 			
 			c.className+=" showTip "+canvasName;
 			var text=buildPersonalityText(levels); //get the tooltip text
-			dw_Tooltip.content_vars[canvasName]={'location':absX,'width':size,'content':text};
+			dw_Tooltip.content_vars[canvasName]={'location':xLoc,'width':size,'content':text};
 			}
 		}
 	
@@ -846,6 +849,7 @@ if (Meteor.isClient) {
 	    	whichPage.className += " slideLeft"; //slide it
     		}
     	document.getElementById("prev").setAttribute("disabled","false");
+    	window.scrollTo(0,0);
     	
     	//re-render the graph page
 //    	if (page==2)
@@ -875,6 +879,8 @@ if (Meteor.isClient) {
 			document.getElementById("prev").setAttribute("disabled","true");
 		else
 			document.getElementById("prev").setAttribute("disabled","false");
+		
+		window.scrollTo(0,0);
 		}
 
 	Template.page.helpers({
