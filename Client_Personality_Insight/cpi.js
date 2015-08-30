@@ -134,6 +134,13 @@ var traits={
 
 
 if (Meteor.isClient) {
+	
+	window.onerror = function(error) // for debugging on Safari
+		{
+		alert(error);
+		};
+		
+	var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
 	var bpImage=new Image(200,200);
 	var clImage=new Image(200,200);
 	var dotDecImage=new Image(40,40);
@@ -142,6 +149,8 @@ if (Meteor.isClient) {
 	var bpColor="#09afeb";
 	var clientColor="#8dc53e";
 	var photoBackgroundColor="#F2FAFC";
+	var oldWindowWidth=0;
+	var oldWindowHeight=0;
 
 	dw_Tooltip.defaultProps = {
 		    hoverable: true, // tooltip lingers so user can hover to click links
@@ -169,17 +178,21 @@ if (Meteor.isClient) {
 		return name;
 		}
 	
-	function resizeCanvas() {
-		document.getElementById("prev").setAttribute("disabled", "true");
-		document.getElementById("next").setAttribute("disabled", "true");
+	function resizeCanvas() 
+		{
+		oldWindowWidth=window.innerWidth;
+		oldWindowHeight=window.innerHeight;
 		var c = document.getElementById("p-photos");
 		c.width = window.innerWidth;//*.986;
 		c.height = window.innerHeight/4;  //25%
 		buildGraph();
+		drawClientPicture();
+		drawBpPicture();
 		pageIsRendered=true;
 		}
 
 	window.addEventListener('resize', resizeCanvas, false);
+	window.addEventListener('load',function(){pageIsRendered=true;});
 	
 	function drawOval(context,x,y,radius,color,lineWidth)
 		{
@@ -196,17 +209,20 @@ if (Meteor.isClient) {
 	
 	function drawClientPicture()
 		{
-		var c = document.getElementById("p-photos");
-		var ctx = c.getContext("2d");
-	
-		var fatLineWidth=c.height*0.1;	
-		var x=c.width/6.7;
-		var y=c.height*.44;
-		var r=(c.height*.66)/2;
-		var w=r*2-fatLineWidth;
-		var h=w;
-		ctx.drawImage(clImage,x-w/2,y-h/2,w,h);
-		drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+		if (Session.get("clientProfile"))
+			{
+			var c = document.getElementById("p-photos");
+			var ctx = c.getContext("2d");
+		
+			var fatLineWidth=c.height*0.1;	
+			var x=c.width/6.7;
+			var y=c.height*.44;
+			var r=(c.height*.66)/2;
+			var w=r*2-fatLineWidth;
+			var h=w;
+			ctx.drawImage(clImage,x-w/2,y-h/2,w,h);
+			drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+			}
 		}
 	
 	function badClientPicture()
@@ -216,17 +232,20 @@ if (Meteor.isClient) {
 	
 	function drawBpPicture()
 		{
-		var c = document.getElementById("p-photos");
-		var ctx = c.getContext("2d");
-	
-		var fatLineWidth=c.height*0.1;	
-		var x=c.width-c.width/6.7;
-		var y=c.height*.44;
-		var r=(c.height*.66)/2;
-		var w=r*2-fatLineWidth;
-		var h=w;
-		ctx.drawImage(bpImage,x-w/2,y-h/2,w,h);
-		drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+		if (Session.get("bpProfile"))
+			{
+			var c = document.getElementById("p-photos");
+			var ctx = c.getContext("2d");
+		
+			var fatLineWidth=c.height*0.1;	
+			var x=c.width-c.width/6.7;
+			var y=c.height*.44;
+			var r=(c.height*.66)/2;
+			var w=r*2-fatLineWidth;
+			var h=w;
+			ctx.drawImage(bpImage,x-w/2,y-h/2,w,h);
+			drawSummarySection(Session.get("bpProfile"),Session.get("clientProfile"));
+			}
 		}
 	
 	function badBpPicture()
@@ -407,6 +426,7 @@ if (Meteor.isClient) {
 			var bpProfile=Session.get("bpProfile");
 			if (clientProfile!=null && bpProfile!=null)
 				{
+//				clearCanvas("p-photos"); //get ready
 				//get the images loading
 				console.log("Loading client and BP images...");
 				bpImage.src=bpProfile.profile_image_url;
@@ -424,6 +444,11 @@ if (Meteor.isClient) {
 				drawSliders(bpProfile,clientProfile);
 				drawBpDots();
 				drawClDots();
+				if (isSafari) // WTF Safari?
+					{
+					drawDecorations();  
+					drawSimilarityBox();
+					}
 				}
 			else if (!fetched)
 				fetch();
@@ -763,7 +788,6 @@ if (Meteor.isClient) {
 				Session.set("clientProfile",result);
 			else
 				Session.set("bpProfile",result);
-			clearCanvas("p-photos");
 			buildGraph();
 			}
 		}
