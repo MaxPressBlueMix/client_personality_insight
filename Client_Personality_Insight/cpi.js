@@ -1,140 +1,6 @@
 
-var traits={
-//	"agreeableness":{
-		"altruism":{
-			"low":"You are more concerned with taking care of yourself than taking time for others.",
-			"high":"You feel fulfilled when helping others and will go out of your way to do so."
-			},
-		"cooperation":{
-			"low":"You do not shy away from contradicting others.",
-			"high":"You are easy to please and try to avoid confrontation."
-			},
-		"modesty":{
-			"low":"You hold yourself in high regard and are satisfied with who you are.",
-			"high":"You are uncomfortable being the center of attention."
-			},
-		"morality":{
-			"low":"You are comfortable using every trick in the book to get what you want.",
-			"high":"You think it is wrong to take advantage of others to get ahead."
-			},
-		"sympathy":{
-			"low":"You think people should generally rely more on themselves than on others.",
-			"high":"You feel what others feel and are compassionate toward them."
-			},
-		"trust":{
-			"low":"You are wary of other people's intentions and do not trust easily.",
-			"high":"You believe the best in others and trust people easily."
-			},
-//		},
-//	"conscientiousness":{	
-		"achievement-striving":{
-			"low":"You are content with your level of accomplishment and do not feel the need to set ambitious goals.",
-			"high":"You set high goals for yourself and work hard to achieve them."
-			},
-		"cautiousness":{
-			"low":"You would rather take action immediately than spend time deliberating making a decision.",
-			"high":"You carefully think through decisions before making them."
-			},
-		"dutifulness":{
-			"low":"You do what you want, disregarding rules and obligations.",
-			"high":"You take rules and obligations seriously, even when they are inconvenient."
-			},
-		"orderliness":{
-			"low":"You do not make a lot of time for organization in your daily life.",
-			"high":"You feel a strong need for structure in your life."
-			},
-		"self-discipline":{
-			"low":"You have a hard time sticking with difficult tasks for a long period of time.",
-			"high":"You can tackle and stick with tough tasks."
-			},
-		"self-efficacy":{
-			"low":"You frequently doubt your ability to achieve your goals.",
-			"high":"You feel you have the ability to succeed in the tasks you set out to do."
-			},
-//		},
-//	"extraversion":{
-		"activity level":{
-			"low":"You appreciate a relaxed pace in life.",
-			"high":"You enjoy a fast-paced, busy schedule with many activities."
-			},
-		"assertiveness":{
-			"low":"You prefer to listen than to talk, especially in group situations.",
-			"high":"You tend to speak up and take charge of situations, and you are comfortable leading groups."
-			},
-		"cheerfulness":{
-			"low":"You are generally serious and do not joke much.",
-			"high":"You are a joyful person and share that joy with the world."
-			},
-		"excitement-seeking":{
-			"low":"You prefer activities that are quiet, calm, and safe.",
-			"high":"You are excited by taking risks and feel bored without lots of action going on."
-			},
-		"friendliness":{
-			"low":"You are a private person and do not let many people in.",
-			"high":"You make friends easily and feel comfortable around other people."
-			},
-		"gregariousness":{
-			"low":"You have a strong desire to have time to yourself.",
-			"high":"You enjoy being in the company of others."
-			},
-//		},
-//	"neuroticism":{
-		"anger":{
-			"low":"It takes a lot to get you angry.",
-			"high":"You have a fiery temper, especially when things do not go your way."
-			},
-		"anxiety":{
-			"low":"You tend to feel calm and self-assured.",
-			"high":"You tend to worry about things that might happen."
-			},
-		"depression":{
-			"low":"You are generally comfortable with yourself as you are.",
-			"high":"You think quite often about the things you are unhappy about."
-			},
-		"immoderation":{
-			"low":"You have control over your desires, which are not particularly intense.",
-			"high":"You feel your desires strongly and are easily tempted by them."
-			},
-		"self-consciousness":{
-			"low":"You are hard to embarrass and are self-confident most of the time.",
-			"high":"You are sensitive about what others might be thinking of you."
-			},
-		"vulnerability":{
-			"low":"You handle unexpected events calmly and effectively.",
-			"high":"You are easily overwhelmed in stressful situations."
-			},
-//		},
-//	"openness":{
-		"adventurousness":{
-			"low":"You enjoy familiar routines and prefer not to deviate from them.",
-			"high":"You are eager to experience new things."
-			},
-		"artistic interests":{
-			"low":"You are less concerned with artistic or creative activities than most people.",
-			"high":"You enjoy beauty and seek out creative experiences."
-			},
-		"emotionality":{
-			"low":"You do not frequently think about or openly express your emotions.",
-			"high":"You are aware of your feelings and how to express them."
-			},
-		"imagination":{
-			"low":"You prefer facts over fantasy.",
-			"high":"You have a wild imagination."
-			},
-		"intellect":{
-			"low":"You prefer dealing with the world as it is, rarely considering abstract ideas.",
-			"high":"You are open to and intrigued by new ideas and love to explore them."
-			},
-		"liberalism":{
-			"low":"You prefer following with tradition to maintain a sense of stability.",
-			"high":"You prefer to challenge authority and traditional values to effect change."
-			}
-//		}
-	};
-
-
 if (Meteor.isClient) {
-	
+
 	window.onerror = function(error) // for debugging on Safari
 		{
 		alert(error);
@@ -345,7 +211,7 @@ if (Meteor.isClient) {
 				{
 				var score=facetList[facet]<0.5?"low":"high";
 				if (traits[facet])
-					text+=traits[facet][score];
+					text+=traits[facet][score].description+" <b>"+traits[facet][score].guidance+"</b> ";
 				}
 			}
 		return text;
@@ -785,10 +651,17 @@ if (Meteor.isClient) {
 			{
 			console.log(result);
 			if (result.screen_name==getClientTwitterId())
+				{
 				Session.set("clientProfile",result);
-			else
+				buildGraph();
+				}
+			else if (result.screen_name==getPartnerTwitterId())
+				{
 				Session.set("bpProfile",result);
-			buildGraph();
+				buildGraph();
+				}
+			else
+				alert("Can't find the Twitter profile!");
 			}
 		}
 	

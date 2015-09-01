@@ -45,7 +45,7 @@ Meteor.methods({
 		console.log("Fetching profile for "+twitterUser);
 		var twitGetSync=Meteor.wrapAsync(Twit.get,Twit);
 		var data=twitGetSync("users/show",{"screen_name":twitterUser});
-
+console.log(data);
 		return data;
 		},
 		
